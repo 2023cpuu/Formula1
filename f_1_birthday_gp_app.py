@@ -12,7 +12,7 @@ def load_data():
 races_df = load_data()
 
 # Título de la app
-st.title("🏁 Grand Prix de los años 50 en tu cumpleaños 🎉")
+st.title("🏁 Grand Prix de los años 50")
 
 # Input del usuario (día y mes)
 st.subheader("¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
