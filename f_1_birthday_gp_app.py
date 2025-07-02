@@ -44,7 +44,8 @@ if not matching_races.empty:
 else:
     st.warning("😢 No hubo ningún Grand Prix en ese día durante los años 50.")
 
-# Tabla completa opcional
+#Tabla
 with st.expander("📋 Ver todos los resultados de los 50s"):
-    st.dataframe(races_df)
+    st.dataframe(races_df, use_container_width=True, height=600)
+
 
