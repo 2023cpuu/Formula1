@@ -12,16 +12,29 @@ def load_data():
 races_df = load_data()
 
 # Título de la app
-st.title("Grand Prix de los años 50 en tu cumpleaños 🎉")
+st.title("Los Grand Prix de los años 50")
 
 # Input del usuario
-birth_input = st.date_input("Selecciona tu fecha de cumpleaños (ignora el año):", value=datetime(1955, 7, 2))
+col1, col2 = st.columns(2)
+
+birth_day = col1.selectbox("Día", list(range(1, 32)), index=1)
+birth_month = col2.selectbox("Mes", [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+], index=6)
+
+# Convertir el mes a número
+month_number = list(range(1, 13))[["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                                   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"].index(birth_month)]
 
 # Buscar carreras en el mismo día y mes
 birth_day = birth_input.day
 birth_month = birth_input.month
 
-matching_races = races_df[(races_df["Date"].dt.day == birth_day) & (races_df["Date"].dt.month == birth_month)]
+matching_races = races_df[
+    (races_df["Date"].dt.day == birth_day) &
+    (races_df["Date"].dt.month == month_number)
+]
 
 if not matching_races.empty:
     st.success("¡Sí hubo Grand Prix en tu cumpleaños!")
