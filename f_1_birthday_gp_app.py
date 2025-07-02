@@ -14,18 +14,20 @@ races_df = load_data()
 # Título de la app
 st.title("Los Grand Prix de los años 50")
 
-# Input del usuario
+# Input del usuario (solo día y mes)
 col1, col2 = st.columns(2)
 
 birth_day = col1.selectbox("Día", list(range(1, 32)), index=1)
-birth_month = col2.selectbox("Mes", [
+birth_month_name = col2.selectbox("Mes", [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ], index=6)
 
-# Convertir el mes a número
-month_number = list(range(1, 13))[["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                                   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"].index(birth_month)]
+# Convertir el nombre del mes a número
+month_number = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+].index(birth_month_name) + 1
 
 # Buscar carreras en el mismo día y mes
 birth_day = birth_input.day
