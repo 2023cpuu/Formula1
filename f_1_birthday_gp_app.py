@@ -5,36 +5,35 @@ from datetime import datetime
 # Cargar los datos
 @st.cache_data
 def load_data():
-    df = pd.read_csv("f1_1950s_race_results.csv")  # Asegúrate que el nombre coincida
-    df["Date"] = pd.to_datetime(df["Date"], format="%d %b %Y", errors='coerce')
-    return df.dropna(subset=["Date"])
+    df = pd.read_csv("F1_1950s_Race_Results_FULL.csv")
+    df["Date_Parsed"] = pd.to_datetime(df["Date"], format="%d %b %Y", errors='coerce')
+    return df.dropna(subset=["Date_Parsed"])
 
 races_df = load_data()
 
 # Título de la app
-st.title("🏁 Grand Prix de los años 50")
+st.title("🏁 Grand Prix de los años 50 en tu cumpleaños 🎉")
 
-# Input del usuario (día y mes, sin año)
+# Input del usuario (día y mes)
 st.subheader("¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
 
 col1, col2 = st.columns(2)
-
 birth_day = col1.selectbox("Día", list(range(1, 32)), index=1)
 birth_month_name = col2.selectbox("Mes", [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ], index=6)
 
-# Convertir nombre del mes a número
+# Convertir mes a número
 month_number = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ].index(birth_month_name) + 1
 
-# Buscar carreras en el mismo día y mes
+# Filtrar carreras que coincidan con día y mes
 matching_races = races_df[
-    (races_df["Date"].dt.day == birth_day) &
-    (races_df["Date"].dt.month == month_number)
+    (races_df["Date_Parsed"].dt.day == birth_day) &
+    (races_df["Date_Parsed"].dt.month == month_number)
 ]
 
 # Mostrar resultados
@@ -44,8 +43,7 @@ if not matching_races.empty:
 else:
     st.warning("😢 No hubo ningún Grand Prix en ese día durante los años 50.")
 
-#Tabla
+# Ver todos los resultados
 with st.expander("📋 Ver todos los resultados de los 50s"):
-    st.dataframe(races_df, use_container_width=True, height=600)
-
+    st.dataframe(races_df[["Year", "Grand Prix", "Date", "Winner", "Team"]], use_container_width=True, height=600)
 
