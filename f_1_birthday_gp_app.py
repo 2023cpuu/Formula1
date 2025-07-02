@@ -5,14 +5,14 @@ from datetime import datetime
 # Cargar los datos
 @st.cache_data
 def load_data():
-    df = pd.read_csv("F1_1950s_race_results.csv")  # Asegúrate que el nombre coincida
+    df = pd.read_csv("f1_1950s_race_results.csv")  # Asegúrate que el nombre coincida
     df["Date"] = pd.to_datetime(df["Date"], format="%d %b %Y", errors='coerce')
     return df.dropna(subset=["Date"])
 
 races_df = load_data()
 
 # Título de la app
-st.title("🏁 Grand Prix de los años 50 en tu cumpleaños 🎉")
+st.title("🏁 Grand Prix de los años 50")
 
 # Input del usuario (día y mes, sin año)
 st.subheader("¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
