@@ -3,19 +3,19 @@ import pandas as pd
 import pydeck as pdk
 from datetime import datetime
 import time
+import random
 
-# ✅ Pega aquí el bloque de estilos:
+# ======================= ESTILO CSS: fondo a cuadros y contenedor blanco =======================
 st.markdown(
     """
     <style>
-    body {
+    html, body, .stApp {
+        height: 100%;
+        margin: 0;
+        padding: 0;
         background-color: white;
-    }
-
-    .stApp {
-        background-image: linear-gradient(45deg, #fff 25%, #000 25%, #000 50%, #fff 50%, #fff 75%, #000 75%);
-        background-size: 60px 60px;
-        background-attachment: fixed;
+        background-image: repeating-conic-gradient(#fff 0% 25%, #000 0% 50%);
+        background-size: 40px 40px;
     }
 
     .block-container {
@@ -35,9 +35,32 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Resto de tu código aquí...
+# ======================= TÍTULO PRINCIPAL =======================
+st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
 
+# ======================= ANIMACIÓN DE AUTO (derecha a izquierda) =======================
+car_animation = """
+<div style="position:relative; height:160px; overflow:hidden;">
+    <div style="
+        position:absolute;
+        left:100%;
+        top:20px;
+        animation: drive 3s linear forwards;
+        font-size: 120px;
+        transform: scaleX(-1);">
+        🏎️💨
+    </div>
+</div>
 
+<style>
+@keyframes drive {
+    0% { left: 100%; }
+    100% { left: -500px; }
+}
+</style>
+"""
+st.markdown(car_animation, unsafe_allow_html=True)
+time.sleep(3.5)
 
 with st.container():
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
