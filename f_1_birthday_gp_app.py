@@ -213,40 +213,54 @@ if team_input:
     else:
         st.warning("No se encontraron resultados para esa escudería.")
 
-# PILOTOS EN MÁS DE UNA ESCUDERÍA
+# PILOTOS QUE CORRIERON PARA MÁS DE UNA ESCUDERÍA
 st.subheader("👨‍🔧 Pilotos que corrieron para más de una escudería")
-piloto_equipos = races_df.groupby("Winner")["Team"].nunique()
-multiples_equipos = piloto_equipos[piloto_equipos > 1].index.tolist()
 
-for piloto in multiples_equipos:
-    equipos = races_df[races_df["Winner"] == piloto]["Team"].unique()
-    emojis = "🚗" * len(equipos)
-    st.markdown(f"- **{piloto}** corrió para {len(equipos)} escuderías {emojis}: {', '.join(equipos)}")
+multi_team_df = races_df.groupby(["Winner", "Team"]).size().reset_index().groupby("Winner").size()
+pilotos_varios_equipos = multi_team_df[multi_team_df > 1].index.tolist()
+
+for piloto in pilotos_varios_equipos:
+    equipos = races_df[races_df["Winner"] == piloto]["Team"].dropna().unique()
+    equipos = [e for e in equipos if e.strip() != ""]
+    if len(equipos) > 1:
+        st.markdown(f"- **{piloto}** corrió para: {', '.join(sorted(equipos))}")
 
 # PILOTOS CON MÚLTIPLES VICTORIAS EN UN MISMO CIRCUITO
 st.subheader("🏟️ Pilotos que ganaron varias veces en un mismo circuito")
-combo_df = races_df.groupby(["Winner", "Grand Prix", "Date_Parsed"]).size().reset_index(name="Count")
-repeats = races_df.groupby(["Winner", "Grand Prix"])["Date_Parsed"].nunique()
-repeats = repeats[repeats > 1].reset_index()
 
-for _, row in repeats.iterrows():
-    piloto, gp = row["Winner"], row["Grand Prix"]
-    pais = gp_to_country.get(gp, gp)
-    circuitos = gp_to_circuits.get(gp, ["[circuito desconocido]"])
-    for circuito in circuitos:
-        st.markdown(f"- **{piloto}** ganó más de una vez en *{circuito}, {pais}*")
+# Suponiendo que Grand Prix + país → circuito
+circuito_df = races_df.copy()
+circuito_df["Circuito"] = circuito_df["Grand Prix"].apply(lambda gp: gp_to_circuits.get(gp, ["Desconocido"])[0])
+circuito_df["País"] = circuito_df["Grand Prix"].map(gp_to_country)
+circuito_df["Lugar"] = circuito_df["Circuito"] + ", " + circuito_df["País"]
 
-# TRIVIA INTERACTIVA
-st.subheader("🧠 Trivia F1 de los años 50")
+wins_por_lugar = circuito_df.groupby(["Winner", "Lugar"]).size().reset_index(name="Victorias")
+repetidos = wins_por_lugar[wins_por_lugar["Victorias"] > 1].sort_values(by="Victorias", ascending=False)
+repetidos.index += 1
 
-pregunta = "¿Cuál fue el primer país fuera de Europa en albergar un Grand Prix en los años 50?"
-opciones = ["Argentina", "Estados Unidos", "Marruecos", "India"]
-respuesta_correcta = "Argentina"
+if not repetidos.empty:
+    st.table(repetidos.rename(columns={
+        "Winner": "Piloto",
+        "Lugar": "Circuito",
+        "Victorias": "Veces que ganó"
+    }))
+else:
+    st.info("Ningún piloto ganó más de una vez en el mismo circuito.")
 
-respuesta_usuario = st.radio("Elige tu respuesta:", opciones)
+# TRIVIA
+st.subheader("🧠 Trivia")
 
-if st.button("Comprobar respuesta"):
-    if respuesta_usuario == respuesta_correcta:
-        st.success("🎉 ¡Correcto! Argentina fue el primer país fuera de Europa en tener un GP: en 1953.")
-    else:
-        st.error(f"❌ Incorrecto. La respuesta correcta es: {respuesta_correcta}.")
+mostrar_pregunta = st.checkbox("Mostrar trivia")
+
+if mostrar_pregunta:
+    pregunta = "¿Cuál fue el primer país fuera de Europa en albergar un Grand Prix en los años 50?"
+    opciones = ["Argentina", "Estados Unidos", "Marruecos", "India"]
+    respuesta_correcta = "Argentina"
+
+    respuesta_usuario = st.radio("Elige tu respuesta:", opciones, key="trivia1")
+
+    if st.button("Comprobar respuesta", key="btn_trivia1"):
+        if respuesta_usuario == respuesta_correcta:
+            st.success("🎉 ¡Correcto! Argentina fue el primer país fuera de Europa en tener un GP: en 1953.")
+        else:
+            st.error(f"❌ Incorrecto. La respuesta correcta es: {respuesta_correcta}.")
