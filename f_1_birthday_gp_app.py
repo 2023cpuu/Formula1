@@ -1,34 +1,36 @@
 import streamlit as st
 import pandas as pd
+import pydeck as pdk
 from datetime import datetime
-import time  # 👈 Importar para usar sleep
+from dateutil.relativedelta import relativedelta
 
-# 🚗 Animación de auto F1 antes de mostrar el contenido
-car_animation = """
-<div style="position:relative; height:160px; overflow:hidden;">
-    <div style="
-        position:absolute;
-        right:-500px;
-        top:20px;
-        animation: drive 3s linear forwards;
-        font-size: 120px;">
-        🏎️💨
-    </div>
-</div>
-
+# ======================= ANIMACIÓN CARRO =======================
+st.markdown('''
 <style>
-@keyframes drive {
-    0% { right: -500px; }
-    100% { right: 100%; }
+@keyframes move-car {
+    0% { left: 100%; }
+    100% { left: -200px; }
+}
+.car-animation {
+    position: fixed;
+    top: 40%;
+    left: 100%;
+    width: 200px;
+    animation: move-car 5s linear forwards;
+    z-index: 9999;
 }
 </style>
-"""
-st.markdown(car_animation, unsafe_allow_html=True)
-time.sleep(4.2)
 
+<div class="car-animation">
+    🏎️💨
+</div>
+''', unsafe_allow_html=True)
 
+# ======================= CONFIGURACIÓN =======================
+st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
+st.title("🏁 Grand Prix de los años 50")
 
-# Cargar los datos
+# ======================= CARGA DE DATOS =======================
 @st.cache_data
 def load_data():
     df = pd.read_csv("F1_1950s_Race_Results_FULL.csv")
@@ -36,246 +38,110 @@ def load_data():
     return df.dropna(subset=["Date_Parsed"])
 
 races_df = load_data()
-races_df = load_data()
 
-# ✅ Diccionario de traducción de Grand Prix
-gp_translation = {
-    "British": "el GP de Gran Bretaña",
-    "French": "el GP de Francia",
-    "Italian": "el GP de Italia",
-    "German": "el GP de Alemania",
-    "Monaco": "el GP de Mónaco",
-    "Belgian": "el GP de Bélgica",
-    "Dutch": "el GP de los Países Bajos",
-    "Swiss": "el GP de Suiza",
-    "Argentine": "el GP de Argentina",
-    "Indianapolis 500": "las 500 Millas de Indianápolis",
-    "Spanish": "el GP de España",
-    "Portuguese": "el GP de Portugal",
-    "Moroccan": "el GP de Marruecos",
-    # Agrega más si los ves en tu CSV
+# ======================= TRADUCCIONES =======================
+gp_to_country = {
+    "British": "Reino Unido", "French": "Francia", "Italian": "Italia", "German": "Alemania",
+    "Monaco": "Mónaco", "Belgian": "Bélgica", "Dutch": "Países Bajos", "Swiss": "Suiza",
+    "Argentine": "Argentina", "Indianapolis 500": "Estados Unidos", "Spanish": "España",
+    "Portuguese": "Portugal", "Moroccan": "Marruecos"
 }
+gp_to_circuit = {
+    "British": "Silverstone Circuit", "French": "Reims-Gueux", "Italian": "Autodromo Nazionale Monza",
+    "German": "Nürburgring", "Monaco": "Circuit de Monaco", "Belgian": "Spa-Francorchamps",
+    "Dutch": "Zandvoort", "Swiss": "Bremgarten", "Argentine": "Autódromo Juan y Oscar Gálvez",
+    "Indianapolis 500": "Indianapolis Motor Speedway", "Spanish": "Pedralbes",
+    "Portuguese": "Boavista", "Moroccan": "Ain-Diab Circuit"
+}
+month_translation = {
+    "Jan": "Enero", "Feb": "Febrero", "Mar": "Marzo", "Apr": "Abril", "May": "Mayo", "Jun": "Junio",
+    "Jul": "Julio", "Aug": "Agosto", "Sep": "Septiembre", "Oct": "Octubre", "Nov": "Noviembre", "Dec": "Diciembre"
+}
+country_coords = {
+    "Reino Unido": [51.5, -0.1], "Francia": [48.85, 2.35], "Italia": [41.9, 12.5],
+    "Alemania": [52.52, 13.4], "Mónaco": [43.73, 7.42], "Bélgica": [50.85, 4.35],
+    "Países Bajos": [52.37, 4.89], "Suiza": [46.95, 7.45], "Argentina": [-34.6, -58.38],
+    "Estados Unidos": [39.8, -86.1], "España": [40.42, -3.7], "Portugal": [38.72, -9.14],
+    "Marruecos": [33.58, -7.62]
+}
+races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
+races_df["Circuito"] = races_df["Grand Prix"].map(gp_to_circuit)
 
-# Título de la app
-st.title("🏁 La fórmula de los 50s")
-
-# Input del usuario (día y mes)
-st.subheader("¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
-
+# ======================= ¿HUBO CARRERA EN TU CUMPLEAÑOS? =======================
+st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
 col1, col2 = st.columns(2)
 birth_day = col1.selectbox("Día", list(range(1, 32)), index=1)
-birth_month_name = col2.selectbox("Mes", [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-], index=6)
+birth_month_name = col2.selectbox("Mes", list(month_translation.values()), index=6)
+month_number = list(month_translation.values()).index(birth_month_name) + 1
 
-# Convertir mes a número
-month_number = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-].index(birth_month_name) + 1
-
-# Filtrar carreras que coincidan con día y mes
 matching_races = races_df[
     (races_df["Date_Parsed"].dt.day == birth_day) &
     (races_df["Date_Parsed"].dt.month == month_number)
 ]
-
-# Mostrar resultados
 if not matching_races.empty:
     st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
     st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]].sort_values("Year"))
 else:
     st.warning("😢 No hubo ningún Grand Prix en ese día durante los años 50.")
 
-# Ver todos los resultados
-with st.expander("📋 Ver todos los resultados de los 50s"):
-    st.dataframe(races_df[["Year", "Grand Prix", "Date", "Winner", "Team"]], use_container_width=True, height=600)
-    
-# 🏁 ¿Cuál fue la carrera más cercana a tu cumpleaños?
+# ======================= CARRERA MÁS CERCANA =======================
+st.subheader("📅 Carrera más cercana a tu cumpleaños")
+ref_date = datetime(1955, month_number, birth_day)
+races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
+closest_race = races_df.loc[races_df["Diff"].idxmin()]
+fecha_gp = closest_race["Date_Parsed"]
+mes_es = month_translation[fecha_gp.strftime("%b")]
+fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
+gp_name = gp_to_country.get(closest_race["Grand Prix"], closest_race["Grand Prix"])
+mensaje_cercano = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest_race['Winner']} con {closest_race['Team']}."
+st.info(mensaje_cercano[0].upper() + mensaje_cercano[1:])
 
-# Fecha del usuario sin año
-birth_date_str = f"{birth_day:02d}-{month_number:02d}"
+# ======================= PILOTO MÁS GANADOR =======================
+st.subheader("🏆 Piloto con más victorias en los 50s")
+top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
+top5_winners.index += 1
+top5_winners.columns = ["Piloto", "Victorias"]
+st.table(top5_winners)
 
-# Calcular diferencia con cada carrera
-races_df["Birthday_Diff"] = races_df["Date_Parsed"].dt.strftime("%d-%m").apply(
-    lambda x: abs(datetime.strptime(x, "%d-%m") - datetime.strptime(birth_date_str, "%d-%m")).days
-)
+# ======================= ESCUDERÍA MÁS GANADORA =======================
+st.subheader("🔧 Escudería más dominante de los 50s")
+top5_teams = races_df["Team"].value_counts().head(5).reset_index()
+top5_teams.index += 1
+top5_teams.columns = ["Escudería", "Victorias"]
+st.table(top5_teams)
 
-# Carrera más cercana
-closest_race = races_df.sort_values("Birthday_Diff").iloc[0]
-
-# Traducción del nombre del GP
-gp_name = gp_translation.get(closest_race["Grand Prix"], f"el GP de {closest_race['Grand Prix']}")
-
-# ✅ Formatear fecha en español
-fecha = closest_race["Date_Parsed"]
-month_translation = {
-    1: "enero", 2: "febrero", 3: "marzo", 4: "abril",
-    5: "mayo", 6: "junio", 7: "julio", 8: "agosto",
-    9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
-}
-fecha_formateada = f"{fecha.day} de {month_translation[fecha.month]} de {fecha.year}"
-
-# Frase final
-texto = f"{gp_name} en {fecha_formateada} fue la carrera más cercana a tu cumple."
-texto = texto[0].upper() + texto[1:]
-
-# Mostrar resultado
-st.subheader("📅 Carrera más cercana a tu cumpleaños:")
-st.info(f"""
-{texto}
-Ganó **{closest_race['Winner']}** con **{closest_race['Team']}**.
-""")
-# 📜 ¿Cuál fue el primer GP de los años 50?
-
-# Buscar la primera carrera por fecha
-first_race = races_df.sort_values("Date_Parsed").iloc[0]
-
-# Traducir nombre del Grand Prix
-gp_name = gp_translation.get(first_race["Grand Prix"], f"el GP de {first_race['Grand Prix']}")
-
-# Traducir la fecha al español
-fecha = first_race["Date_Parsed"]
-month_translation = {
-    1: "enero", 2: "febrero", 3: "marzo", 4: "abril",
-    5: "mayo", 6: "junio", 7: "julio", 8: "agosto",
-    9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
-}
-fecha_formateada = f"{fecha.day} de {month_translation[fecha.month]} de {fecha.year}"
-
-# Armar texto final con capitalización
-texto = f"{gp_name} abrió la década el {fecha_formateada}."
-texto = texto[0].upper() + texto[1:]
-
-# Mostrar resultado
-st.subheader("📜 Primer GP de los años 50:")
-st.info(f"""
-{texto}
-Ganó **{first_race['Winner']}** con **{first_race['Team']}**.
-""")
-
-# 🏆 ¿Qué piloto ganó más veces en los años 50?
-
-# Contar victorias por piloto
-winner_counts = races_df["Winner"].value_counts()
-top_driver = winner_counts.idxmax()
-num_wins = winner_counts.max()
-
-# Armar frase con capitalización
-texto = f"{top_driver} fue el piloto con más victorias: {num_wins} en total."
-texto = texto[0].upper() + texto[1:]
-
-# Mostrar resultado
-st.subheader("🏆 Piloto más ganador de los 50s:")
-st.success(texto)
-
-# ✅ Mostrar tabla del top 5 (versión compatible con cualquier pandas)
-with st.expander("📊 Ver el top 5 de pilotos más ganadores"):
-    st.table(
-        winner_counts.head(5)
-        .reset_index()
-        .rename(columns={"index": "Piloto", "Winner": "Victorias"})
-    )
-
-# 🔧 ¿Qué escudería ganó más en los años 50?
-
-# Contar victorias por equipo
-team_counts = races_df["Team"].value_counts()
-top_team = team_counts.idxmax()
-team_wins = team_counts.max()
-
-# Frase con capitalización
-texto = f"{top_team} fue la escudería con más triunfos: {team_wins} en total."
-texto = texto[0].upper() + texto[1:]
-
-# Mostrar resultado
-st.subheader("🔧 Escudería más dominante de los 50s:")
-st.success(texto)
-
-# ✅ Mostrar tabla del top 5 (versión compatible)
-with st.expander("📊 Ver el top 5 de escuderías más ganadoras"):
-    st.table(
-        team_counts.head(5)
-        .reset_index()
-        .rename(columns={"index": "Escudería", "Team": "Victorias"})
-    )
-
-# 🌍 ¿En qué país hubo más carreras?
-
-# Diccionario de traducción GP → País
-gp_to_country = {
-    "British": "Reino Unido",
-    "French": "Francia",
-    "Italian": "Italia",
-    "German": "Alemania",
-    "Monaco": "Mónaco",
-    "Belgian": "Bélgica",
-    "Dutch": "Países Bajos",
-    "Swiss": "Suiza",
-    "Argentine": "Argentina",
-    "Indianapolis 500": "Estados Unidos",
-    "Spanish": "España",
-    "Portuguese": "Portugal",
-    "Moroccan": "Marruecos"
-}
-
-# Diccionario de coordenadas (para el mapa)
-country_coords = {
-    "Reino Unido": [51.5, -0.1],
-    "Francia": [48.85, 2.35],
-    "Italia": [41.9, 12.5],
-    "Alemania": [52.52, 13.4],
-    "Mónaco": [43.73, 7.42],
-    "Bélgica": [50.85, 4.35],
-    "Países Bajos": [52.37, 4.89],
-    "Suiza": [46.95, 7.45],
-    "Argentina": [-34.6, -58.38],
-    "Estados Unidos": [39.8, -86.1],
-    "España": [40.42, -3.7],
-    "Portugal": [38.72, -9.14],
-    "Marruecos": [33.58, -7.62]
-}
-
-# Traducir Grand Prix a país
-races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
-
-# Contar cuántas carreras hubo por país
+# ======================= PAÍS CON MÁS CARRERAS =======================
+st.subheader("🌍 País con más carreras en los 50s")
 country_counts = races_df["País"].value_counts()
 top_count = country_counts.max()
 top_countries = country_counts[country_counts == top_count].index.tolist()
 
-if len(top_countries) == 2:
-    # Si hay solo dos países, usar "e" si el segundo comienza con "I"
-    pais1, pais2 = top_countries
-    conjuncion = "e" if pais2.strip().lower().startswith("i") else "y"
-    lista_paises = f"{pais1} {conjuncion} {pais2}"
+if len(top_countries) == 1:
+    pais_texto = f"{top_countries[0]} fue el país con más Grandes Premios: {top_count} en total."
 else:
-    lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
+    if len(top_countries) == 2:
+        pais1, pais2 = top_countries
+        conjuncion = "e" if pais2.strip().lower().startswith("i") else "y"
+        lista_paises = f"{pais1} {conjuncion} {pais2}"
+    else:
+        lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
+    pais_texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
+st.success(pais_texto[0].upper() + pais_texto[1:])
 
-# Capitalizar frase
-texto = texto[0].upper() + texto[1:]
-
-# Mostrar resultado
-st.subheader("🌍 País con más carreras en los 50s:")
-st.success(texto)
-
-# Mostrar tabla con el top 5
 with st.expander("📊 Ver el top 5 de países con más carreras"):
-    st.table(
-        country_counts.head(5)
-        .reset_index()
-        .rename(columns={"index": "País", "País": "Cantidad de carreras"})
-    )
+    top5_countries = country_counts.head(5).reset_index()
+    top5_countries.index += 1
+    top5_countries.columns = ["País", "Cantidad de carreras"]
+    st.table(top5_countries)
 
-# Mostrar Grand Prix por país (como reemplazo del circuito)
-with st.expander("🏟️ Ver los Grand Prix realizados en cada país"):
-    gp_por_pais = races_df.groupby("País")["Grand Prix"].unique()
-    for pais, gps in gp_por_pais.items():
-        nombres = [f"GP de {gp_to_country.get(gp, gp)}" for gp in gps]
-        st.markdown(f"**{pais}**: {', '.join(nombres)}")
+with st.expander("🏟️ Ver los circuitos usados en cada país"):
+    circuitos_por_pais = races_df.groupby("País")["Circuito"].unique().dropna()
+    for pais, circuitos in circuitos_por_pais.items():
+        st.markdown(f"**{pais}**: {', '.join(circuitos)}")
+    st.caption("📝 *Nota: 'GP de' se refiere al evento por país, no al nombre específico del circuito.*")
 
-# Crear DataFrame para el mapa
+# ======================= MAPA INTERACTIVO =======================
+st.subheader("🗺️ Mapa de países con carreras en los años 50")
 map_data = []
 for country, count in country_counts.items():
     if country in country_coords:
@@ -283,12 +149,6 @@ for country, count in country_counts.items():
         map_data.append({"País": country, "Lat": lat, "Lon": lon, "Carreras": count})
 
 map_df = pd.DataFrame(map_data)
-
-# Mostrar mapa
-st.subheader("🗺️ Mapa de países con carreras en los años 50")
-
-import pydeck as pdk
-
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=map_df,
@@ -298,22 +158,5 @@ layer = pdk.Layer(
     pickable=True,
     auto_highlight=True
 )
-
-view_state = pdk.ViewState(
-    latitude=20,
-    longitude=0,
-    zoom=1.2,
-    pitch=0
-)
-
-st.pydeck_chart(pdk.Deck(
-    layers=[layer],
-    initial_view_state=view_state,
-    tooltip={"text": "{País}: {Carreras} carreras"}
-))
-
-st.pydeck_chart(pdk.Deck(
-    layers=[layer],
-    initial_view_state=view_state,
-    tooltip={"text": "{País}: {Carreras} carreras"}
-))
+view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
+st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "{País}: {Carreras} carreras"}))
