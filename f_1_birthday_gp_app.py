@@ -250,6 +250,9 @@ with st.container():
     view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
     st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "{País}: {Carreras} carreras}" if map_mode == "Por país" else "{Circuito}: {Carreras} carreras"}))
 
+import streamlit as st
+import time
+
 # ======================= TRIVIA =======================
 st.subheader("🧠 Trivia")
 
@@ -296,7 +299,7 @@ idx = st.session_state.trivia_idx
 if idx < len(trivia_preguntas):
     pregunta = trivia_preguntas[idx]
     st.markdown(f"**{pregunta['pregunta']}**")
-    
+
     seleccion = st.radio(
         "Selecciona una opción:",
         options=pregunta["opciones"],
@@ -307,6 +310,7 @@ if idx < len(trivia_preguntas):
         if st.button("Comprobar respuesta"):
             st.session_state.seleccion_usuario = seleccion
             st.session_state.mostrar_resultado = True
+            st.experimental_rerun()
 
     if st.session_state.mostrar_resultado:
         correcta = pregunta["respuesta"]
@@ -319,7 +323,6 @@ if idx < len(trivia_preguntas):
             st.session_state.trivia_idx += 1
             st.session_state.mostrar_resultado = False
             st.session_state.seleccion_usuario = None
+            st.experimental_rerun()
 else:
     st.success("🎉 ¡Has terminado la trivia!")
-
-
