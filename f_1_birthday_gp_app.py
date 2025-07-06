@@ -2,84 +2,78 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 import time
-import random
 
-# ------------------- CONFIGURACIÓN DE PÁGINA -------------------
-st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
+# =================== CONFIGURACIÓN DE PÁGINA ===================
+st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁", layout="wide")
 
-# ------------------- ESTILOS CSS -------------------
+# =================== ESTILOS CSS ===================
 st.markdown("""
     <style>
-    html, body, .stApp {
+    /* Fondo de bandera a cuadros */
+    .stApp {
         background: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 0 0 / 40px 40px;
     }
 
-    .main-box {
+    /* Caja blanca central */
+    .main-container {
         background-color: rgba(255, 255, 255, 0.95);
-        padding: 2rem;
+        padding: 2.5rem 3rem;
         border-radius: 20px;
         max-width: 1000px;
-        margin: 0 auto;
-        box-shadow: 0px 4px 20px rgba(0,0,0,0.3);
+        margin: 2rem auto;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
 
-    .titulo {
-        font-size: 3rem;
+    /* Título principal */
+    .titulo-app {
+        font-size: 3.2rem;
         text-align: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.8rem;
     }
 
-    .carro-statico {
-        font-size: 50px;
-        text-align: center;
-        margin-bottom: 1.5rem;
-    }
-
-    @keyframes drive-left {
+    /* Carro animado */
+    @keyframes drive {
         0% { right: -200px; }
         100% { right: 100%; }
     }
 
-    .carro-animado {
+    .car-animation {
         position: relative;
         height: 120px;
         overflow: hidden;
     }
 
-    .carro-emoji {
+    .car-emoji {
         position: absolute;
         right: -200px;
-        top: 30px;
+        top: 25px;
         font-size: 80px;
+        animation: drive 3s linear forwards;
         transform: scaleX(-1);
-        animation: drive-left 3s linear forwards;
+    }
+
+    .car-static {
+        text-align: center;
+        font-size: 50px;
+        margin-bottom: 2rem;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# ------------------- ANIMACIÓN DEL AUTO -------------------
-car_animation = """
-<div class="carro-animado">
-    <div class="carro-emoji">🏎️💨</div>
+# =================== ANIMACIÓN DEL CARRO ===================
+car_html = """
+<div class="car-animation">
+    <div class="car-emoji">🏎️💨</div>
 </div>
 """
-st.markdown(car_animation, unsafe_allow_html=True)
+st.markdown(car_html, unsafe_allow_html=True)
 time.sleep(4)
 
-# ------------------- CONTENIDO PRINCIPAL -------------------
-st.markdown('<div class="main-box">', unsafe_allow_html=True)
-st.markdown('<div class="titulo">La Fórmula de los 50s</div>', unsafe_allow_html=True)
-st.markdown('<div class="carro-statico">🏎️</div>', unsafe_allow_html=True)
-
-# 🔽🔽🔽 Aquí va TODO el resto de tu app (preguntas, tablas, mapas, etc.)
-st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
-# ... y continúa con todo tu contenido como ya lo tenías
-
-# 🔼🔼🔼 Fin del contenido
-
-st.markdown('</div>', unsafe_allow_html=True)
+# =================== TÍTULO Y CARRO ESTÁTICO ===================
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
+st.markdown('<div class="titulo-app">La Fórmula de los 50s</div>', unsafe_allow_html=True)
+st.markdown('<div class="car-static">🏎️</div>', unsafe_allow_html=True)
 
 
 
