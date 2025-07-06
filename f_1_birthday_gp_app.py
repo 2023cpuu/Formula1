@@ -35,10 +35,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ======================= TÍTULO PRINCIPAL =======================
-st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
-st.image("https://i.imgur.com/tXsjOO5.png", caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
-
 # ======================= ANIMACIÓN DE AUTO (derecha a izquierda) =======================
 import time  # Asegúrate de tener este importado arriba si no lo tienes
 
@@ -67,7 +63,9 @@ car_animation = """
 st.markdown(car_animation, unsafe_allow_html=True)
 time.sleep(3.5)
 
-
+# ======================= TÍTULO PRINCIPAL =======================
+st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
+st.image("https://i.imgur.com/tXsjOO5.png", caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
 
 
 with st.container():
