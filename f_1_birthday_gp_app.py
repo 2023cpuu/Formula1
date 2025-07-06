@@ -9,27 +9,28 @@ import random
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
 st.markdown("""
     <style>
-    .stApp {
-        background: 
+    html, body, [class*="stApp"] {
+        background-image: 
             repeating-conic-gradient(#000 0% 25%, white 0% 50%) 0% 0% / 60px 60px;
-        color: #000;
+        background-size: 60px 60px;
     }
-    .contenedor-central {
+
+    .main-container {
         background-color: rgba(255, 255, 255, 0.96);
         padding: 2.5rem;
         border-radius: 20px;
         margin: 2rem auto;
         max-width: 1000px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
-    .contenedor-central h1, .contenedor-central h2, .contenedor-central h3,
-    .contenedor-central h4, .contenedor-central h5, .contenedor-central h6,
-    .contenedor-central p, .contenedor-central label {
+
+    .main-container h1, .main-container h2, .main-container h3,
+    .main-container h4, .main-container h5, .main-container h6,
+    .main-container p, .main-container label {
         color: #111 !important;
     }
     </style>
 """, unsafe_allow_html=True)
-
 
 # 🎨 Fondo tipo bandera a cuadros
 st.markdown("""
