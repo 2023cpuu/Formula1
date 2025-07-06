@@ -39,7 +39,8 @@ st.markdown(
 st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
 
 # ======================= ANIMACIÓN DE AUTO (derecha a izquierda) =======================
-car_animation = """
+import time  # Asegúrate de tener este importado arriba si no lo tienes
+
 car_animation = """
 <div style="position:relative; height:160px; overflow:hidden;">
     <div style="
@@ -60,8 +61,10 @@ car_animation = """
 }
 </style>
 """
+
 st.markdown(car_animation, unsafe_allow_html=True)
 time.sleep(3.5)
+
 
 
 with st.container():
