@@ -43,24 +43,24 @@ car_animation = """
 <div style="position:relative; height:160px; overflow:hidden;">
     <div style="
         position:absolute;
-        left:100%;
+        left:-500px;
         top:20px;
         animation: drive 3s linear forwards;
-        font-size: 120px;
-        transform: scaleX(-1);">
+        font-size: 120px;">
         🏎️💨
     </div>
 </div>
 
 <style>
 @keyframes drive {
-    0% { left: 100%; }
-    100% { left: -500px; }
+    0% { left: -500px; }
+    100% { left: 100%; }
 }
 </style>
 """
 st.markdown(car_animation, unsafe_allow_html=True)
 time.sleep(3.5)
+
 
 with st.container():
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
