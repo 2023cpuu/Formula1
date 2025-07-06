@@ -224,6 +224,7 @@ else:
     pilotos_multiteam.columns = ["Piloto", "Escuderías distintas"]
     st.table(pilotos_multiteam)
 
+import altair as alt
 
 # ======================= PILOTO INTERACTIVO =======================
 st.subheader("🎯 ¿Qué Grandes Premios ganó tu piloto favorito?")
@@ -233,14 +234,28 @@ piloto_seleccionado = st.selectbox("Selecciona un piloto", [""] + pilotos_unicos
 
 if piloto_seleccionado:
     victorias_piloto = races_df[races_df["Winner"] == piloto_seleccionado].sort_values("Date_Parsed")
-    
+
     if not victorias_piloto.empty:
         st.success(f"{piloto_seleccionado} ganó {len(victorias_piloto)} carrera(s) en los años 50.")
-        st.dataframe(victorias_piloto[["Year", "Grand Prix", "Date", "Team"]])
 
-        # Mostrar gráfico por año
-        victorias_por_año = victorias_piloto["Year"].value_counts().sort_index()
-        st.bar_chart(victorias_por_año)
+        tabla_victorias = victorias_piloto[["Year", "Grand Prix", "Date", "Team"]].reset_index(drop=True)
+        tabla_victorias.index += 1
+        tabla_victorias.columns = ["Año", "Grand Prix", "Fecha", "Escudería"]
+        st.table(tabla_victorias)
+
+        # Gráfico de barras con Altair, sin decimales
+        victorias_por_año = victorias_piloto["Year"].value_counts().sort_index().reset_index()
+        victorias_por_año.columns = ["Año", "Victorias"]
+
+        chart = alt.Chart(victorias_por_año).mark_bar(color="#C00000").encode(
+            x=alt.X("Año:O", title="Año"),
+            y=alt.Y("Victorias:Q", title="Número de victorias", axis=alt.Axis(format="d"))
+        ).properties(
+            width=600,
+            height=400
+        )
+
+        st.altair_chart(chart, use_container_width=True)
     else:
         st.warning(f"{piloto_seleccionado} no ganó ningún GP en los años 50.")
 
