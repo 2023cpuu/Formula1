@@ -9,28 +9,29 @@ import random
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
 st.markdown("""
     <style>
-    html, body, [class*="stApp"] {
-        background-image: 
-            repeating-conic-gradient(#000 0% 25%, white 0% 50%) 0% 0% / 60px 60px;
-        background-size: 60px 60px;
+    /* Fondo estilo bandera a cuadros */
+    html, body, .stApp {
+        background: repeating-conic-gradient(#000 0% 25%, white 0% 50%) 0 0 / 80px 80px;
     }
 
-    .main-container {
-        background-color: rgba(255, 255, 255, 0.96);
-        padding: 2.5rem;
-        border-radius: 20px;
-        margin: 2rem auto;
-        max-width: 1000px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    /* Contenedor blanco translúcido centrado */
+    .custom-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 3rem;
+        border-radius: 15px;
+        max-width: 900px;
+        margin: 3rem auto;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
 
-    .main-container h1, .main-container h2, .main-container h3,
-    .main-container h4, .main-container h5, .main-container h6,
-    .main-container p, .main-container label {
+    /* Asegura contraste del texto */
+    .custom-container h1, .custom-container h2, .custom-container h3,
+    .custom-container p, .custom-container label, .custom-container .stMarkdown {
         color: #111 !important;
     }
     </style>
 """, unsafe_allow_html=True)
+
 
 # 🎨 Fondo tipo bandera a cuadros
 st.markdown("""
