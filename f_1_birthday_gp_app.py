@@ -254,9 +254,9 @@ import streamlit as st
 import time
 
 import streamlit as st
-
 st.subheader("🧠 Trivia")
 
+# Preguntas y respuestas
 trivia_preguntas = [
     {
         "pregunta": "¿Qué piloto ganó más carreras en la década de 1950?",
@@ -285,40 +285,48 @@ trivia_preguntas = [
     }
 ]
 
-# Inicializar estados
-if "trivia_index" not in st.session_state:
-    st.session_state.trivia_index = 0
-if "respuesta_estado" not in st.session_state:
-    st.session_state.respuesta_estado = None
+# Inicialización de estados
+if "trivia_pregunta_idx" not in st.session_state:
+    st.session_state.trivia_pregunta_idx = 0
+if "trivia_respuesta_seleccionada" not in st.session_state:
+    st.session_state.trivia_respuesta_seleccionada = None
+if "trivia_estado" not in st.session_state:
+    st.session_state.trivia_estado = "esperando"  # puede ser: esperando, correcto, incorrecto
 
-# Mostrar pregunta actual
-i = st.session_state.trivia_index
+# Lógica principal
+idx = st.session_state.trivia_pregunta_idx
 
-if i < len(trivia_preguntas):
-    pregunta = trivia_preguntas[i]
+if idx < len(trivia_preguntas):
+    pregunta = trivia_preguntas[idx]
+
     st.markdown(f"**{pregunta['pregunta']}**")
 
-    opcion = st.radio(
+    st.session_state.trivia_respuesta_seleccionada = st.radio(
         "Selecciona una opción:",
-        pregunta["opciones"],
-        key=f"opcion_{i}"
+        options=pregunta["opciones"],
+        index=0,
+        key=f"radio_{idx}"
     )
 
-    col1, col2 = st.columns([1, 1])
-
-    if col1.button("Comprobar", key=f"comprobar_{i}"):
-        st.session_state.respuesta_estado = (opcion == pregunta["respuesta"])
-
-    if st.session_state.respuesta_estado is not None:
-        if st.session_state.respuesta_estado:
-            st.success("✅ ¡Correcto!")
+    if st.button("Comprobar respuesta", key=f"comprobar_{idx}"):
+        if st.session_state.trivia_respuesta_seleccionada == pregunta["respuesta"]:
+            st.session_state.trivia_estado = "correcto"
         else:
-            st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta['respuesta']}")
+            st.session_state.trivia_estado = "incorrecto"
 
-        if col2.button("Siguiente", key=f"siguiente_{i}"):
-            st.session_state.trivia_index += 1
-            st.session_state.respuesta_estado = None
+    if st.session_state.trivia_estado == "correcto":
+        st.success("✅ ¡Correcto!")
+        if st.button("Siguiente", key=f"siguiente_{idx}"):
+            st.session_state.trivia_pregunta_idx += 1
+            st.session_state.trivia_estado = "esperando"
+            st.session_state.trivia_respuesta_seleccionada = None
+
+    elif st.session_state.trivia_estado == "incorrecto":
+        st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta['respuesta']}")
+        if st.button("Siguiente", key=f"siguiente_{idx}"):
+            st.session_state.trivia_pregunta_idx += 1
+            st.session_state.trivia_estado = "esperando"
+            st.session_state.trivia_respuesta_seleccionada = None
 
 else:
     st.success("🎉 ¡Has completado la trivia!")
-
