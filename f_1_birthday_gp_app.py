@@ -5,26 +5,27 @@ import time  # 👈 Importar para usar sleep
 
 # 🚗 Animación de auto F1 antes de mostrar el contenido
 car_animation = """
-<div style="position:relative; height:100px; overflow:hidden;">
+<div style="position:relative; height:160px; overflow:hidden;">
     <div style="
         position:absolute;
-        left:-300px;
-        top:10px;
+        right:-500px;
+        top:20px;
         animation: drive 3s linear forwards;
-        font-size: 70px;">
-        💨🏎️
+        font-size: 120px;">
+        🏎️💨
     </div>
 </div>
 
 <style>
 @keyframes drive {
-    0% { left: -300px; }
-    100% { left: 100%; }
+    0% { right: -500px; }
+    100% { right: 100%; }
 }
 </style>
 """
 st.markdown(car_animation, unsafe_allow_html=True)
-time.sleep(3.2)
+time.sleep(4.2)
+
 
 
 # Cargar los datos
