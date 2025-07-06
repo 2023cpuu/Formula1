@@ -326,4 +326,3 @@ if i < len(trivia_preguntas):
             st.session_state.opcion_seleccionada = None
 else:
     st.success("🎉 ¡Has completado la trivia!")
-
