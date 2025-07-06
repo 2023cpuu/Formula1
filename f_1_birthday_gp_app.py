@@ -257,7 +257,6 @@ import streamlit as st
 
 st.subheader("🧠 Trivia")
 
-# Preguntas
 trivia_preguntas = [
     {
         "pregunta": "¿Qué piloto ganó más carreras en la década de 1950?",
@@ -286,17 +285,19 @@ trivia_preguntas = [
     }
 ]
 
-# Inicialización del estado
+# Estado inicial
 if "pregunta_actual" not in st.session_state:
     st.session_state.pregunta_actual = 0
 if "respuesta_dada" not in st.session_state:
     st.session_state.respuesta_dada = False
 if "opcion_elegida" not in st.session_state:
     st.session_state.opcion_elegida = None
+if "evitar_doble_rerun" not in st.session_state:
+    st.session_state.evitar_doble_rerun = False
 
-# Pregunta actual
 i = st.session_state.pregunta_actual
 
+# Mostrar pregunta actual
 if i < len(trivia_preguntas):
     pregunta = trivia_preguntas[i]
     st.markdown(f"### {pregunta['pregunta']}")
@@ -306,7 +307,9 @@ if i < len(trivia_preguntas):
         if st.button("Comprobar respuesta"):
             st.session_state.opcion_elegida = seleccion
             st.session_state.respuesta_dada = True
-            st.rerun()
+            if not st.session_state.evitar_doble_rerun:
+                st.session_state.evitar_doble_rerun = True
+                st.rerun()
     else:
         correcta = pregunta["respuesta"]
         if st.session_state.opcion_elegida == correcta:
@@ -318,6 +321,4 @@ if i < len(trivia_preguntas):
             st.session_state.pregunta_actual += 1
             st.session_state.respuesta_dada = False
             st.session_state.opcion_elegida = None
-            st.rerun()
-else:
-    st.success("🎉 ¡Has completado la trivia!")
+            st.session_state.e_
