@@ -10,11 +10,10 @@ import random
 st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
 st.title("🏁 La Fórmula de los 50s")
 st.image(
-    "https://upload.wikimedia.org/wikipedia/commons/9/90/Ferrari_500_F2_1952_Juan_Manuel_Fangio.jpg",
-    caption="Ferrari 500 F2 - Dominador de los 50s",
+    "https://upload.wikimedia.org/wikipedia/commons/8/8b/F1.svg",
+    caption="Estilo F1",
     use_container_width=True
 )
-
 st.markdown(
     """
     <style>
