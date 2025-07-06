@@ -253,7 +253,8 @@ with st.container():
 import streamlit as st
 import time
 
-# ======================= TRIVIA =======================
+import streamlit as st
+
 st.subheader("🧠 Trivia")
 
 # Preguntas
@@ -285,7 +286,7 @@ trivia_preguntas = [
     }
 ]
 
-# Inicialización del estado
+# Inicialización
 if "pregunta_actual" not in st.session_state:
     st.session_state.pregunta_actual = 0
 if "respuesta_dada" not in st.session_state:
@@ -293,26 +294,22 @@ if "respuesta_dada" not in st.session_state:
 if "opcion_elegida" not in st.session_state:
     st.session_state.opcion_elegida = None
 
-# Obtener la pregunta actual
+# Pregunta actual
 i = st.session_state.pregunta_actual
 
 if i < len(trivia_preguntas):
     pregunta = trivia_preguntas[i]
     st.markdown(f"**{pregunta['pregunta']}**")
 
-    # Mostrar opciones solo si aún no se respondió
     if not st.session_state.respuesta_dada:
-        st.session_state.opcion_elegida = st.radio(
-            "Elige una opción:",
-            options=pregunta["opciones"],
-            key=f"opcion_{i}"
-        )
+        seleccion = st.radio("Elige una opción:", pregunta["opciones"], key=f"radio_{i}")
         if st.button("Comprobar respuesta"):
+            st.session_state.opcion_elegida = seleccion
             st.session_state.respuesta_dada = True
+            st.experimental_rerun()
     else:
         correcta = pregunta["respuesta"]
-        elegida = st.session_state.opcion_elegida
-        if elegida == correcta:
+        if st.session_state.opcion_elegida == correcta:
             st.success("✅ ¡Correcto!")
         else:
             st.error(f"❌ Incorrecto. La respuesta correcta era: {correcta}")
@@ -321,5 +318,6 @@ if i < len(trivia_preguntas):
             st.session_state.pregunta_actual += 1
             st.session_state.respuesta_dada = False
             st.session_state.opcion_elegida = None
+            st.experimental_rerun()
 else:
     st.success("🎉 ¡Has completado la trivia!")
