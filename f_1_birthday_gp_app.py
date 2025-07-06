@@ -3,6 +3,7 @@ import pandas as pd
 import pydeck as pdk
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import time 
 
 # 🚗 Animación de auto F1 antes de mostrar el contenido
 car_animation = """
