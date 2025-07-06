@@ -223,3 +223,24 @@ else:
     pilotos_multiteam.index += 1
     pilotos_multiteam.columns = ["Piloto", "Escuderías distintas"]
     st.table(pilotos_multiteam)
+
+
+# ======================= PILOTO INTERACTIVO =======================
+st.subheader("🎯 ¿Qué Grandes Premios ganó tu piloto favorito?")
+
+pilotos_unicos = sorted(races_df["Winner"].dropna().unique())
+piloto_seleccionado = st.selectbox("Selecciona un piloto", [""] + pilotos_unicos)
+
+if piloto_seleccionado:
+    victorias_piloto = races_df[races_df["Winner"] == piloto_seleccionado].sort_values("Date_Parsed")
+    
+    if not victorias_piloto.empty:
+        st.success(f"{piloto_seleccionado} ganó {len(victorias_piloto)} carrera(s) en los años 50.")
+        st.dataframe(victorias_piloto[["Year", "Grand Prix", "Date", "Team"]])
+
+        # Mostrar gráfico por año
+        victorias_por_año = victorias_piloto["Year"].value_counts().sort_index()
+        st.bar_chart(victorias_por_año)
+    else:
+        st.warning(f"{piloto_seleccionado} no ganó ningún GP en los años 50.")
+
