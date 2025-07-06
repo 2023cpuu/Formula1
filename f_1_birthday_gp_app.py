@@ -198,62 +198,40 @@ with st.container():
             st.markdown(f"**{pais}**: {', '.join(sorted(circuitos))}")
         st.caption("📝 *Nota: Se muestran todos los circuitos usados por país en los años 50.*")
 
-    # 🌐 Mapa interactivo
-    st.subheader("🌐 Mapa de circuitos o países con carreras en los 50s")
-    map_mode = st.selectbox("¿Qué quieres ver en el mapa?", ["Por país", "Por circuito"])
+# ======================= MAPA INTERACTIVO =======================
+st.subheader("🗺️ Mapa de países con carreras en los años 50")
 
-    if map_mode == "Por país":
-        country_coords = {
-            "Reino Unido": [51.5, -0.1], "Francia": [48.85, 2.35], "Italia": [41.9, 12.5],
-            "Alemania": [52.52, 13.4], "Mónaco": [43.73, 7.42], "Bélgica": [50.85, 4.35],
-            "Países Bajos": [52.37, 4.89], "Suiza": [46.95, 7.45], "Argentina": [-34.6, -58.38],
-            "Estados Unidos": [39.8, -86.1], "España": [40.42, -3.7], "Portugal": [38.72, -9.14],
-            "Marruecos": [33.58, -7.62]
-        }
-        map_data = []
-        for country, count in country_counts.items():
-            if country in country_coords:
-                lat, lon = country_coords[country]
-                map_data.append({"País": country, "Lat": lat, "Lon": lon, "Carreras": count})
-        map_df = pd.DataFrame(map_data)
+map_data = []
+for country, count in country_counts.items():
+    if country in country_coords:
+        lat, lon = country_coords[country]
+        map_data.append({
+            "País": country,
+            "Lat": lat,
+            "Lon": lon,
+            "Carreras": count,
+            "Icono": "📍"
+        })
+map_df = pd.DataFrame(map_data)
 
-    else:  # Por circuito
-        circuito_coords = {
-            "Silverstone": [52.0786, -1.0169], "Aintree": [53.475, -2.941],
-            "Spa-Francorchamps": [50.4372, 5.9714], "Zandvoort": [52.3883, 4.5409],
-            "Reims-Gueux": [49.247, 3.945], "Rouen-Les-Essarts": [49.398, 1.034],
-            "Nürburgring": [50.3356, 6.9475], "AVUS": [52.4725, 13.2761],
-            "Circuit de Monaco": [43.7347, 7.4206], "Pedralbes": [41.391, 2.119],
-            "Boavista": [41.158, -8.630], "Monsanto Park": [38.7169, -9.1952],
-            "Bremgarten": [46.948, 7.447], "Ain-Diab Circuit": [33.578, -7.625],
-            "Autódromo Juan y Oscar Gálvez": [-34.671, -58.471],
-            "Indianapolis Motor Speedway": [39.795, -86.234],
-            "Autodromo Nazionale Monza": [45.6156, 9.2811]
-        }
+# Capa con íconos tipo texto
+layer = pdk.Layer(
+    "TextLayer",
+    data=map_df,
+    get_position='[Lon, Lat]',
+    get_text='Icono',
+    get_size=32,
+    get_color=[200, 30, 0],
+    get_angle=0,
+    get_alignment_baseline="'bottom'",
+)
 
-        circuito_counts = races_df["Grand Prix"].map(gp_to_circuits).explode().value_counts()
-        map_data = []
-        for circuito, count in circuito_counts.items():
-            if circuito in circuito_coords:
-                lat, lon = circuito_coords[circuito]
-                map_data.append({"Circuito": circuito, "Lat": lat, "Lon": lon, "Carreras": count})
-        map_df = pd.DataFrame(map_data)
-
-    layer = pdk.Layer(
-        "ScatterplotLayer",
-        data=map_df,
-        get_position="[Lon, Lat]",
-        get_radius="Carreras * 50000",
-        get_fill_color="[200, 30, 0, 160]",
-        pickable=True
-    )
-    view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
-    st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "{País}: {Carreras} carreras}" if map_mode == "Por país" else "{Circuito}: {Carreras} carreras"}))
-
-import streamlit as st
-import time
-
-import streamlit as st
+view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
+st.pydeck_chart(pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={"text": "{País}: {Carreras} carreras"}
+))
 
 st.subheader("🧠 Trivia")
 
