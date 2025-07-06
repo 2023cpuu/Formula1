@@ -253,7 +253,6 @@ with st.container():
 import streamlit as st
 import time
 
-# ======================= TRIVIA =======================
 st.subheader("🧠 Trivia")
 
 # Lista de preguntas
@@ -285,44 +284,43 @@ trivia_preguntas = [
     }
 ]
 
-# Inicializar variables en session_state
-if "trivia_idx" not in st.session_state:
-    st.session_state.trivia_idx = 0
-if "mostrar_resultado" not in st.session_state:
-    st.session_state.mostrar_resultado = False
-if "seleccion_usuario" not in st.session_state:
-    st.session_state.seleccion_usuario = None
+# Inicialización de estados
+if "trivia_index" not in st.session_state:
+    st.session_state.trivia_index = 0
+if "trivia_estado" not in st.session_state:
+    st.session_state.trivia_estado = "pregunta"  # pregunta | resultado | final
+if "trivia_respuesta" not in st.session_state:
+    st.session_state.trivia_respuesta = None
 
-# Obtener la pregunta actual
-idx = st.session_state.trivia_idx
+idx = st.session_state.trivia_index
 
 if idx < len(trivia_preguntas):
     pregunta = trivia_preguntas[idx]
     st.markdown(f"**{pregunta['pregunta']}**")
 
-    seleccion = st.radio(
-        "Selecciona una opción:",
-        options=pregunta["opciones"],
-        key=f"radio_{idx}"
-    )
+    # Solo mostrar selección si estamos en modo pregunta
+    if st.session_state.trivia_estado == "pregunta":
+        st.session_state.trivia_respuesta = st.radio(
+            "Selecciona una opción:",
+            options=pregunta["opciones"],
+            key=f"radio_{idx}"
+        )
 
-    if not st.session_state.mostrar_resultado:
         if st.button("Comprobar respuesta"):
-            st.session_state.seleccion_usuario = seleccion
-            st.session_state.mostrar_resultado = True
-            st.experimental_rerun()
+            st.session_state.trivia_estado = "resultado"
 
-    if st.session_state.mostrar_resultado:
+    # Mostrar resultado
+    elif st.session_state.trivia_estado == "resultado":
         correcta = pregunta["respuesta"]
-        if st.session_state.seleccion_usuario == correcta:
+        if st.session_state.trivia_respuesta == correcta:
             st.success("✅ ¡Correcto!")
         else:
             st.error(f"❌ Incorrecto. La respuesta correcta era: {correcta}")
 
-        if st.button("Siguiente"):
-            st.session_state.trivia_idx += 1
-            st.session_state.mostrar_resultado = False
-            st.session_state.seleccion_usuario = None
-            st.experimental_rerun()
+        if st.button("Siguiente pregunta"):
+            st.session_state.trivia_index += 1
+            st.session_state.trivia_estado = "pregunta"
+            st.session_state.trivia_respuesta = None
 else:
     st.success("🎉 ¡Has terminado la trivia!")
+
