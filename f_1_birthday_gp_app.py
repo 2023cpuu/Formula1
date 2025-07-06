@@ -257,7 +257,7 @@ import streamlit as st
 
 st.subheader("🧠 Trivia")
 
-# ---------- Preguntas ----------
+# ---------- Preguntas ampliadas ----------
 trivia_preguntas = [
     {
         "pregunta": "¿Qué piloto ganó más carreras en la década de 1950?",
@@ -273,6 +273,21 @@ trivia_preguntas = [
         "pregunta": "¿Qué país sudamericano albergó Grandes Premios en los años 50?",
         "opciones": ["Brasil", "Argentina", "Chile", "Perú"],
         "respuesta": "Argentina"
+    },
+    {
+        "pregunta": "¿Qué piloto argentino fue cinco veces campeón del mundo en los 50s?",
+        "opciones": ["Carlos Reutemann", "Juan Manuel Fangio", "Ricardo Zunino", "José Froilán González"],
+        "respuesta": "Juan Manuel Fangio"
+    },
+    {
+        "pregunta": "¿Cuál fue la escudería más ganadora en los 50s?",
+        "opciones": ["Ferrari", "Mercedes", "Maserati", "Alfa Romeo"],
+        "respuesta": "Ferrari"
+    },
+    {
+        "pregunta": "¿En qué país se encuentra el circuito de Spa-Francorchamps?",
+        "opciones": ["Francia", "Bélgica", "Países Bajos", "Suiza"],
+        "respuesta": "Bélgica"
     }
 ]
 
@@ -285,6 +300,8 @@ if "trivia_respondida" not in st.session_state:
     st.session_state.trivia_respondida = False
 if "trivia_resultado" not in st.session_state:
     st.session_state.trivia_resultado = False
+if "trivia_puntaje" not in st.session_state:
+    st.session_state.trivia_puntaje = 0
 
 # ---------- Funciones ----------
 def comprobar_respuesta():
@@ -294,6 +311,8 @@ def comprobar_respuesta():
         correcta = trivia_preguntas[st.session_state.trivia_index]["respuesta"]
         st.session_state.trivia_resultado = st.session_state.trivia_opcion == correcta
         st.session_state.trivia_respondida = True
+        if st.session_state.trivia_resultado:
+            st.session_state.trivia_puntaje += 1
 
 def siguiente_pregunta():
     st.session_state.trivia_index += 1
@@ -322,5 +341,6 @@ if st.session_state.trivia_index < len(trivia_preguntas):
         else:
             st.error(f"❌ Incorrecto. La respuesta correcta era: {q['respuesta']}")
         st.button("Siguiente pregunta", on_click=siguiente_pregunta)
+
 else:
-    st.success("🎉 ¡Has terminado todas las preguntas!")
+    st.success(f"🎉 ¡Has terminado la trivia! Obtuviste {st.session_state.trivia_puntaje} de {len(trivia_preguntas)} puntos.")
