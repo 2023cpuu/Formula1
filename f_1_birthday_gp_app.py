@@ -93,16 +93,17 @@ else:
     st.warning("😢 No hubo ningún Grand Prix en ese día durante los años 50.")
 
 # ======================= CARRERA MÁS CERCANA =======================
-st.subheader("📅 Carrera más cercana a tu cumpleaños")
-ref_date = datetime(1955, month_number, birth_day)
-races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
-closest_race = races_df.loc[races_df["Diff"].idxmin()]
-fecha_gp = closest_race["Date_Parsed"]
-mes_es = month_translation[fecha_gp.strftime("%b")]
-fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
-gp_name = gp_to_country.get(closest_race["Grand Prix"], closest_race["Grand Prix"])
-mensaje_cercano = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest_race['Winner']} con {closest_race['Team']}."
-st.info(mensaje_cercano[0].upper() + mensaje_cercano[1:])
+if matching_races.empty:
+    st.subheader("📅 Carrera más cercana a tu cumpleaños")
+    ref_date = datetime(1955, month_number, birth_day)
+    races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
+    closest_race = races_df.loc[races_df["Diff"].idxmin()]
+    fecha_gp = closest_race["Date_Parsed"]
+    mes_es = month_translation[fecha_gp.strftime("%b")]
+    fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
+    gp_name = gp_to_country.get(closest_race["Grand Prix"], closest_race["Grand Prix"])
+    mensaje_cercano = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest_race['Winner']} con {closest_race['Team']}."
+    st.info(mensaje_cercano[0].upper() + mensaje_cercano[1:])
 
 # ======================= PILOTO MÁS GANADOR =======================
 st.subheader("🏆 Piloto con más victorias en los 50s")
