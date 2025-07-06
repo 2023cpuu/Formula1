@@ -9,11 +9,6 @@ import random
 # Configurar página (título de pestaña)
 st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
 st.title("🏁 La Fórmula de los 50s")
-st.image(
-    "https://upload.wikimedia.org/wikipedia/commons/8/8b/F1.svg",
-    caption="Estilo F1",
-    use_container_width=True
-)
 st.markdown(
     """
     <style>
@@ -246,6 +241,34 @@ st.pydeck_chart(pdk.Deck(
     initial_view_state=view_state,
     tooltip={"text": "{País}: {Carreras} carreras"}
 ))
+
+st.subheader("🔍 Explora pilotos y escuderías")
+
+# Obtener listas únicas
+pilotos_unicos = sorted(races_df["Winner"].dropna().unique())
+escuderias_unicas = sorted(races_df["Team"].dropna().unique())
+
+col1, col2 = st.columns(2)
+
+# Selectbox para piloto
+piloto_seleccionado = col1.selectbox("Selecciona un piloto", ["--"] + pilotos_unicos)
+
+if piloto_seleccionado != "--":
+    st.markdown(f"### Resultados de {piloto_seleccionado}")
+    st.dataframe(
+        races_df[races_df["Winner"] == piloto_seleccionado][["Year", "Grand Prix", "Date", "Team"]],
+        use_container_width=True
+    )
+
+# Selectbox para escudería
+escuderia_seleccionada = col2.selectbox("Selecciona una escudería", ["--"] + escuderias_unicas)
+
+if escuderia_seleccionada != "--":
+    st.markdown(f"### Resultados de {escuderia_seleccionada}")
+    st.dataframe(
+        races_df[races_df["Team"] == escuderia_seleccionada][["Year", "Grand Prix", "Date", "Winner"]],
+        use_container_width=True
+    )
 
 
 
