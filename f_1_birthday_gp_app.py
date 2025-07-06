@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 import pydeck as pdk
+import time
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-import time
 
-# 🚗 Animación de auto F1 antes de mostrar el contenido
+# ========== ANIMACIÓN ==========
 car_animation = """
 <div style="position:relative; height:160px; overflow:hidden;">
     <div style="
@@ -28,11 +29,11 @@ car_animation = """
 st.markdown(car_animation, unsafe_allow_html=True)
 time.sleep(4.2)
 
-# ======================= CONFIGURACIÓN =======================
+# ========== CONFIGURACIÓN ==========
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
 st.title("🏁 Grand Prix de los años 50")
 
-# ======================= CARGA DE DATOS =======================
+# ========== CARGA DE DATOS ==========
 @st.cache_data
 def load_data():
     df = pd.read_csv("F1_1950s_Race_Results_FULL.csv")
@@ -41,7 +42,7 @@ def load_data():
 
 races_df = load_data()
 
-# ======================= DICCIONARIOS =======================
+# ========== DICCIONARIOS ==========
 gp_to_country = {
     "British": "Reino Unido", "French": "Francia", "Italian": "Italia", "German": "Alemania",
     "Monaco": "Mónaco", "Belgian": "Bélgica", "Dutch": "Países Bajos", "Swiss": "Suiza",
@@ -80,33 +81,30 @@ country_coords = {
 
 races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
 
-# ======================= ¿HUBO GP EN TU CUMPLE? =======================
+# ========== ¿HUBO GP EN TU CUMPLE? ==========
 st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
 
-dias = ["Selecciona un día"] + list(range(1, 32))
-meses = ["Selecciona un mes"] + list(month_translation.values())
-
 col1, col2 = st.columns(2)
-birth_day = col1.selectbox("Día", dias)
-birth_month_name = col2.selectbox("Mes", meses)
+birth_day = col1.selectbox("Día", [""] + list(range(1, 32)))
+birth_month_name = col2.selectbox("Mes", [""] + list(month_translation.values()))
 
-if isinstance(birth_day, int) and birth_month_name in month_translation.values():
-    month_number = list(month_translation.values()).index(birth_month_name) + 1
-
+if birth_day and birth_month_name:
+    month_number = list(month_translation.values()).index(birth_month_name)
     matching_races = races_df[
         (races_df["Date_Parsed"].dt.day == birth_day) &
-        (races_df["Date_Parsed"].dt.month == month_number)
+        (races_df["Date_Parsed"].dt.month == month_number + 1)
     ]
-
     if not matching_races.empty:
         st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
-        st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]].sort_values("Year"))
+        df = matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]].sort_values("Year").reset_index(drop=True)
+        df.index += 1
+        st.table(df)
     else:
         st.warning("😢 No hubo ningún Grand Prix en ese día durante los años 50.")
 
-        # ========== SOLO SI NO HUBO CARRERA EN LA FECHA EXACTA ==========
+        # Carrera más cercana
         st.subheader("📅 Carrera más cercana a tu cumpleaños")
-        ref_date = datetime(1955, month_number, birth_day)
+        ref_date = datetime(1955, month_number + 1, birth_day)
         races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
         closest_race = races_df.loc[races_df["Diff"].idxmin()]
         fecha_gp = closest_race["Date_Parsed"]
@@ -115,64 +113,55 @@ if isinstance(birth_day, int) and birth_month_name in month_translation.values()
         gp_name = gp_to_country.get(closest_race["Grand Prix"], closest_race["Grand Prix"])
         mensaje_cercano = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest_race['Winner']} con {closest_race['Team']}."
         st.info(mensaje_cercano[0].upper() + mensaje_cercano[1:])
-else:
-    st.info("👆 Selecciona tu día y mes de cumpleaños para ver si hubo una carrera.")
 
-# ======================= PILOTO MÁS GANADOR =======================
+# ========== TOP PILOTOS ==========
 st.subheader("🏆 Piloto con más victorias en los 50s")
-top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
-top5_winners.index += 1
-top5_winners.columns = ["Piloto", "Victorias"]
-st.table(top5_winners)
+top5 = races_df["Winner"].value_counts().head(5).reset_index()
+top5.index += 1
+top5.columns = ["Piloto", "Victorias"]
+st.table(top5)
 
-# ======================= ESCUDERÍA MÁS GANADORA =======================
+# ========== TOP ESCUDERÍAS ==========
 st.subheader("🔧 Escudería más dominante de los 50s")
-top5_teams = races_df["Team"].value_counts().head(5).reset_index()
-top5_teams.index += 1
-top5_teams.columns = ["Escudería", "Victorias"]
-st.table(top5_teams)
+top_teams = races_df["Team"].value_counts().head(5).reset_index()
+top_teams.index += 1
+top_teams.columns = ["Escudería", "Victorias"]
+st.table(top_teams)
 
-# ======================= PAÍS CON MÁS CARRERAS =======================
+# ========== PAÍSES CON MÁS CARRERAS ==========
 st.subheader("🌍 País con más carreras en los 50s")
 country_counts = races_df["País"].value_counts()
 top_count = country_counts.max()
 top_countries = country_counts[country_counts == top_count].index.tolist()
 
 if len(top_countries) == 1:
-    pais_texto = f"{top_countries[0]} fue el país con más Grandes Premios: {top_count} en total."
+    texto = f"{top_countries[0]} fue el país con más Grandes Premios: {top_count} en total."
 else:
     if len(top_countries) == 2:
-        pais1, pais2 = top_countries
-        conjuncion = "e" if pais2.strip().lower().startswith("i") else "y"
-        lista_paises = f"{pais1} {conjuncion} {pais2}"
+        conj = "e" if top_countries[1].lower().startswith("i") else "y"
+        texto = f"{top_countries[0]} {conj} {top_countries[1]} fueron los países con más Grandes Premios: {top_count} cada uno."
     else:
-        lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
-    pais_texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
-st.success(pais_texto[0].upper() + pais_texto[1:])
+        texto = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]} fueron los países con más Grandes Premios: {top_count} cada uno."
+st.success(texto[0].upper() + texto[1:])
 
 with st.expander("📊 Ver el top 5 de países con más carreras"):
-    top5_countries = country_counts.head(5).reset_index()
-    top5_countries.index += 1
-    top5_countries.columns = ["País", "Cantidad de carreras"]
-    st.table(top5_countries)
+    top5_paises = country_counts.head(5).reset_index()
+    top5_paises.index += 1
+    top5_paises.columns = ["País", "Cantidad de carreras"]
+    st.table(top5_paises)
 
-# ======================= CIRCUITOS POR PAÍS =======================
+# ========== CIRCUITOS USADOS ==========
 with st.expander("🏟️ Ver los circuitos usados en cada país"):
-    circuitos_por_pais = {}
     for gp, pais in gp_to_country.items():
         if gp in gp_to_circuits:
-            circuitos_por_pais.setdefault(pais, set()).update(gp_to_circuits[gp])
-    for pais, circuitos in circuitos_por_pais.items():
-        st.markdown(f"**{pais}**: {', '.join(sorted(circuitos))}")
+            circuitos = gp_to_circuits[gp]
+            st.markdown(f"**{pais}**: {', '.join(sorted(circuitos))}")
     st.caption("📝 *Nota: Se muestran todos los circuitos usados por país en los años 50.*")
 
-# ======================= MAPA INTERACTIVO =======================
+# ========== MAPA ==========
 st.subheader("🗺️ Mapa de países con carreras en los años 50")
-map_data = []
-for country, count in country_counts.items():
-    if country in country_coords:
-        lat, lon = country_coords[country]
-        map_data.append({"País": country, "Lat": lat, "Lon": lon, "Carreras": count})
+map_data = [{"País": c, "Lat": lat, "Lon": lon, "Carreras": country_counts[c]}
+            for c, (lat, lon) in country_coords.items() if c in country_counts]
 map_df = pd.DataFrame(map_data)
 
 layer = pdk.Layer(
@@ -181,79 +170,74 @@ layer = pdk.Layer(
     get_position="[Lon, Lat]",
     get_radius="Carreras * 50000",
     get_fill_color="[200, 30, 0, 160]",
-    pickable=True,
-    auto_highlight=True
+    pickable=True
 )
-view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
-st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "{País}: {Carreras} carreras"}))
+view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2)
+st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state,
+                         tooltip={"text": "{País}: {Carreras} carreras"}))
 
-st.subheader("🏟️ Pilotos que ganaron varias veces en el mismo circuito")
-
-multi_winners = races_df.groupby(["Winner", "Grand Prix"]).size().reset_index(name="Victorias")
-multi_winners = multi_winners[multi_winners["Victorias"] > 1].sort_values(by="Victorias", ascending=False)
-
-if multi_winners.empty:
-    st.info("Ningún piloto ganó más de una vez en el mismo circuito durante los 50s.")
-else:
-    multi_winners.index += 1
-    multi_winners.columns = ["Piloto", "Grand Prix", "Victorias"]
-    st.table(multi_winners)
-
-st.subheader("🕰️ Primer y último Grand Prix de los años 50")
-
-primer_gp = races_df.loc[races_df["Date_Parsed"].idxmin()]
-ultimo_gp = races_df.loc[races_df["Date_Parsed"].idxmax()]
-
-for label, gp in [("Primer", primer_gp), ("Último", ultimo_gp)]:
-    pais = gp_to_country.get(gp["Grand Prix"], gp["Grand Prix"])
-    fecha = gp["Date_Parsed"]
-    mes_es = month_translation[fecha.strftime("%b")]
-    fecha_str = f"{fecha.day} {mes_es} {fecha.year}"
-    st.write(f"**{label} GP:** El GP de {pais} el {fecha_str}, ganado por {gp['Winner']} con {gp['Team']}.")
-
-st.subheader("🔄 Pilotos que corrieron para más de una escudería")
-
-pilotos_por_escuderia = races_df.groupby("Winner")["Team"].nunique()
-pilotos_multiteam = pilotos_por_escuderia[pilotos_por_escuderia > 1].sort_values(ascending=False)
-
-if pilotos_multiteam.empty:
-    st.info("Todos los pilotos compitieron con una sola escudería.")
-else:
-    pilotos_multiteam = pilotos_multiteam.reset_index()
-    pilotos_multiteam.index += 1
-    pilotos_multiteam.columns = ["Piloto", "Escuderías distintas"]
-    st.table(pilotos_multiteam)
-
-import altair as alt
-
-# ======================= PILOTO INTERACTIVO =======================
+# ========== INTERACTIVO: PILOTO ==========
 st.subheader("🎯 ¿Qué Grandes Premios ganó tu piloto favorito?")
+piloto = st.selectbox("Selecciona un piloto", [""] + sorted(races_df["Winner"].dropna().unique()))
+if piloto:
+    victorias = races_df[races_df["Winner"] == piloto].sort_values("Date_Parsed")
+    df = victorias[["Year", "Grand Prix", "Date", "Team"]].reset_index(drop=True)
+    df.index += 1
+    df.columns = ["Año", "Grand Prix", "Fecha", "Escudería"]
+    st.table(df)
 
-pilotos_unicos = sorted(races_df["Winner"].dropna().unique())
-piloto_seleccionado = st.selectbox("Selecciona un piloto", [""] + pilotos_unicos)
+    chart_df = victorias["Year"].value_counts().sort_index().reset_index()
+    chart_df.columns = ["Año", "Victorias"]
+    chart = alt.Chart(chart_df).mark_bar(color="#C00000").encode(
+        x=alt.X("Año:O", scale=alt.Scale(paddingInner=0.1), axis=alt.Axis(labelAngle=0)),
+        y=alt.Y("Victorias:Q", axis=alt.Axis(format="d"))
+    ).properties(width=40 * len(chart_df), height=400)
+    st.altair_chart(chart, use_container_width=True)
 
-if piloto_seleccionado:
-    victorias_piloto = races_df[races_df["Winner"] == piloto_seleccionado].sort_values("Date_Parsed")
+# ========== INTERACTIVO: ESCUDERÍA ==========
+st.subheader("🏢 ¿Qué Grandes Premios ganó tu escudería favorita?")
+team = st.selectbox("Selecciona una escudería", [""] + sorted(races_df["Team"].dropna().unique()))
+if team:
+    victorias = races_df[races_df["Team"] == team].sort_values("Date_Parsed")
+    df = victorias[["Year", "Grand Prix", "Date", "Winner"]].reset_index(drop=True)
+    df.index += 1
+    df.columns = ["Año", "Grand Prix", "Fecha", "Piloto"]
+    st.table(df)
 
-    if not victorias_piloto.empty:
-        st.success(f"{piloto_seleccionado} ganó {len(victorias_piloto)} carrera(s) en los años 50.")
+    chart_df = victorias["Year"].value_counts().sort_index().reset_index()
+    chart_df.columns = ["Año", "Victorias"]
+    chart = alt.Chart(chart_df).mark_bar(color="#0066CC").encode(
+        x=alt.X("Año:O", scale=alt.Scale(paddingInner=0.1), axis=alt.Axis(labelAngle=0)),
+        y=alt.Y("Victorias:Q", axis=alt.Axis(format="d"))
+    ).properties(width=40 * len(chart_df), height=400)
+    st.altair_chart(chart, use_container_width=True)
 
-        tabla_victorias = victorias_piloto[["Year", "Grand Prix", "Date", "Team"]].reset_index(drop=True)
-        tabla_victorias.index += 1
-        tabla_victorias.columns = ["Año", "Grand Prix", "Fecha", "Escudería"]
-        st.table(tabla_victorias)
+# ========== MULTI-ESCUDERÍA ==========
+st.subheader("🔄 Pilotos que corrieron para más de una escudería")
+multiteam = races_df.groupby("Winner")["Team"].agg(lambda x: sorted(set(x)))
+multiteam = multiteam[multiteam.apply(len) > 1].reset_index()
+multiteam["Escuderías"] = multiteam["Team"].apply(lambda x: " 🚗 ".join(x))
+multiteam = multiteam[["Winner", "Escuderías"]]
+multiteam.index += 1
+multiteam.columns = ["Piloto", "Escuderías por las que compitió"]
+st.table(multiteam)
 
-        # Gráfico de barras con Altair, sin decimales
-        victorias_por_año = victorias_piloto["Year"].value_counts().sort_index().reset_index()
-        victorias_por_año.columns = ["Año", "Victorias"]
+# ========== PILOTOS DOMINANTES POR CIRCUITO ==========
+st.subheader("🏟️ Pilotos que ganaron varias veces en el mismo circuito")
+victorias = races_df.groupby(["Winner", "Grand Prix"]).size().reset_index(name="Victorias")
+victorias = victorias[victorias["Victorias"] > 1]
 
-        chart = alt.Chart(victorias_por_año).mark_bar(color="#C00000").encode(
-            x=alt.X("Año:O", title="Año"),
-            y=alt.Y("Victorias:Q", title="Número de victorias", axis=alt.Axis(format="d"))
-        ).properties(
-            width=600,
-            height=400
-        )
+rows = []
+for _, row in victorias.iterrows():
+    piloto, gp, victs = row["Winner"], row["Grand Prix"], row["Victorias"]
+    pais = gp_to_country.get(gp, gp)
+    for circuito in gp_to_circuits.get(gp, [gp]):
+        rows.append((piloto, f"{circuito}, {pais}", victs))
+
+df = pd.DataFrame(rows, columns=["Piloto", "Circuito, País", "Victorias"])
+df = df.sort_values("Victorias", ascending=False).drop_duplicates()
+df.index += 1
+st.table(df)
 
         st.altair_chart(chart, use_container_width=True)
     else:
