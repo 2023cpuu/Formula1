@@ -1,65 +1,62 @@
 import streamlit as st
-import pandas as pd
-import pydeck as pdk
-from datetime import datetime
 import time
-import random
 
-# Configurar página
-# Configurar página (título de pestaña)
+# Configurar la página con fondo blanco
 st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
-import streamlit as st
-import time
 
-# ========== ANIMACIÓN DEL CARRITO ENTRANDO (IZQUIERDA → DERECHA) ==========
-car_forward = """
+# Asegurar fondo blanco
+st.markdown("""
+<style>
+body {
+    background-color: white !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Animación de carrito: entra y sale
+car_animation = """
 <div style="position:relative; height:160px; overflow:hidden;">
     <div style="
         position:absolute;
-        left:-300px;
+        right:-500px;
         top:20px;
-        animation: driveRight 3s linear forwards;
+        animation: drive 3s linear forwards;
         font-size: 120px;">
         🏎️💨
     </div>
 </div>
+
+<div style="position:relative; height:160px; overflow:hidden;">
+    <div style="
+        position:absolute;
+        left:-500px;
+        top:20px;
+        animation: drive_back 3s 3s linear forwards;
+        font-size: 120px;">
+        💨🏎️
+    </div>
+</div>
+
 <style>
-@keyframes driveRight {
-    0% { left: -300px; }
+@keyframes drive {
+    0% { right: -500px; }
+    100% { right: 100%; }
+}
+@keyframes drive_back {
+    0% { left: -500px; }
     100% { left: 100%; }
 }
 </style>
 """
-st.markdown(car_forward, unsafe_allow_html=True)
-time.sleep(3.2)
+st.markdown(car_animation, unsafe_allow_html=True)
+time.sleep(6.2)  # Esperar que termine la animación
 
-# ========== ANIMACIÓN DEL CARRITO SALIENDO (DERECHA → IZQUIERDA) ==========
-car_backward = """
-<div style="position:relative; height:160px; overflow:hidden;">
-    <div style="
-        position:absolute;
-        right:-300px;
-        top:20px;
-        animation: driveLeft 3s linear forwards;
-        font-size: 120px;">
-        🏎️💨
-    </div>
-</div>
-<style>
-@keyframes driveLeft {
-    0% { right: -300px; }
-    100% { right: 100%; }
-}
-</style>
-"""
-st.markdown(car_backward, unsafe_allow_html=True)
-time.sleep(3.2)
-
-# ========== TÍTULO CENTRAL + AUTO ESTÁTICO BAJO EL TÍTULO ==========
+# Título con carrito estático debajo
 st.markdown("""
-<h1 style='text-align: center; font-size: 3em;'>La Fórmula de los 50s</h1>
-<div style='text-align:center; font-size:110px; margin-top:-40px;'>🏎️</div>
+<h1 style='text-align: center; font-size: 3em; margin-bottom: 0;'>La Fórmula de los 50s</h1>
+<div style='text-align:center; font-size:110px; margin-top:-10px;'>🏎️</div>
 """, unsafe_allow_html=True)
+
 
 
 # 🎨 Fondo tipo bandera a cuadros
