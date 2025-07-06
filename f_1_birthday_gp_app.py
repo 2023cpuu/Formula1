@@ -3,7 +3,7 @@ import pandas as pd
 import pydeck as pdk
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-import time 
+import time
 
 # 🚗 Animación de auto F1 antes de mostrar el contenido
 car_animation = """
@@ -27,19 +27,6 @@ car_animation = """
 """
 st.markdown(car_animation, unsafe_allow_html=True)
 time.sleep(4.2)
-
-
-
-# Cargar los datos
-@st.cache_data
-def load_data():
-    df = pd.read_csv("F1_1950s_Race_Results_FULL.csv")
-    df["Date_Parsed"] = pd.to_datetime(df["Date"], format="%d %b %Y", errors='coerce')
-    return df.dropna(subset=["Date_Parsed"])
-
-races_df = load_data()
-races_df = load_data()
-
 
 # ======================= CONFIGURACIÓN =======================
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
@@ -95,33 +82,41 @@ races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
 
 # ======================= ¿HUBO GP EN TU CUMPLE? =======================
 st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
+
+dias = ["Selecciona un día"] + list(range(1, 32))
+meses = ["Selecciona un mes"] + list(month_translation.values())
+
 col1, col2 = st.columns(2)
-birth_day = col1.selectbox("Día", list(range(1, 32)), index=1)
-birth_month_name = col2.selectbox("Mes", list(month_translation.values()), index=6)
-month_number = list(month_translation.values()).index(birth_month_name) + 1
+birth_day = col1.selectbox("Día", dias)
+birth_month_name = col2.selectbox("Mes", meses)
 
-matching_races = races_df[
-    (races_df["Date_Parsed"].dt.day == birth_day) &
-    (races_df["Date_Parsed"].dt.month == month_number)
-]
-if not matching_races.empty:
-    st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
-    st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]].sort_values("Year"))
+if isinstance(birth_day, int) and birth_month_name in month_translation.values():
+    month_number = list(month_translation.values()).index(birth_month_name) + 1
+
+    matching_races = races_df[
+        (races_df["Date_Parsed"].dt.day == birth_day) &
+        (races_df["Date_Parsed"].dt.month == month_number)
+    ]
+
+    if not matching_races.empty:
+        st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
+        st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]].sort_values("Year"))
+    else:
+        st.warning("😢 No hubo ningún Grand Prix en ese día durante los años 50.")
+
+        # ========== SOLO SI NO HUBO CARRERA EN LA FECHA EXACTA ==========
+        st.subheader("📅 Carrera más cercana a tu cumpleaños")
+        ref_date = datetime(1955, month_number, birth_day)
+        races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
+        closest_race = races_df.loc[races_df["Diff"].idxmin()]
+        fecha_gp = closest_race["Date_Parsed"]
+        mes_es = month_translation[fecha_gp.strftime("%b")]
+        fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
+        gp_name = gp_to_country.get(closest_race["Grand Prix"], closest_race["Grand Prix"])
+        mensaje_cercano = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest_race['Winner']} con {closest_race['Team']}."
+        st.info(mensaje_cercano[0].upper() + mensaje_cercano[1:])
 else:
-    st.warning("😢 No hubo ningún Grand Prix en ese día durante los años 50.")
-
-# ======================= CARRERA MÁS CERCANA =======================
-if matching_races.empty:
-    st.subheader("📅 Carrera más cercana a tu cumpleaños")
-    ref_date = datetime(1955, month_number, birth_day)
-    races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
-    closest_race = races_df.loc[races_df["Diff"].idxmin()]
-    fecha_gp = closest_race["Date_Parsed"]
-    mes_es = month_translation[fecha_gp.strftime("%b")]
-    fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
-    gp_name = gp_to_country.get(closest_race["Grand Prix"], closest_race["Grand Prix"])
-    mensaje_cercano = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest_race['Winner']} con {closest_race['Team']}."
-    st.info(mensaje_cercano[0].upper() + mensaje_cercano[1:])
+    st.info("👆 Selecciona tu día y mes de cumpleaños para ver si hubo una carrera.")
 
 # ======================= PILOTO MÁS GANADOR =======================
 st.subheader("🏆 Piloto con más victorias en los 50s")
