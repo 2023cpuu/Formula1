@@ -275,34 +275,39 @@ trivia_preguntas = [
     }
 ]
 
-# Inicializar estados
+# Inicialización de estados
 if "trivia_idx" not in st.session_state:
     st.session_state.trivia_idx = 0
+if "respuesta_actual" not in st.session_state:
+    st.session_state.respuesta_actual = None
 if "mostrar_resultado" not in st.session_state:
     st.session_state.mostrar_resultado = False
 if "es_correcta" not in st.session_state:
-    st.session_state.es_correcta = False
+    st.session_state.es_correcta = None
 
 idx = st.session_state.trivia_idx
 
 if idx < len(trivia_preguntas):
     pregunta = trivia_preguntas[idx]
-    opciones_con_placeholder = ["Selecciona una opción"] + pregunta["opciones"]
-
+    
     st.markdown(f"**{pregunta['pregunta']}**")
-    respuesta_usuario = st.radio(
-        label="",
-        options=opciones_con_placeholder,
-        index=0,
-        key=f"respuesta_{idx}"
-    )
+    
+    for opcion in pregunta["opciones"]:
+        if st.radio(
+            label="",
+            options=[opcion],
+            key=f"radio_{idx}_{opcion}",
+            index=0 if st.session_state.respuesta_actual == opcion else -1
+        ):
+            st.session_state.respuesta_actual = opcion
+            break
 
     if not st.session_state.mostrar_resultado:
         if st.button("Comprobar respuesta"):
-            if respuesta_usuario == "Selecciona una opción":
+            if not st.session_state.respuesta_actual:
                 st.warning("Por favor, selecciona una opción antes de continuar.")
             else:
-                st.session_state.es_correcta = respuesta_usuario == pregunta["respuesta"]
+                st.session_state.es_correcta = st.session_state.respuesta_actual == pregunta["respuesta"]
                 st.session_state.mostrar_resultado = True
     else:
         if st.session_state.es_correcta:
@@ -312,9 +317,9 @@ if idx < len(trivia_preguntas):
 
         if st.button("Siguiente pregunta"):
             st.session_state.trivia_idx += 1
+            st.session_state.respuesta_actual = None
             st.session_state.mostrar_resultado = False
-            st.session_state.es_correcta = False
+            st.session_state.es_correcta = None
 
 else:
     st.success("🎉 ¡Has completado la trivia!")
-
