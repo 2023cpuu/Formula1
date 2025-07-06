@@ -4,24 +4,41 @@ import pydeck as pdk
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-# ======================= ANIMACIÓN DE CARRO =======================
-st.markdown('''
+# 🚗 Animación de auto F1 antes de mostrar el contenido
+car_animation = """
+<div style="position:relative; height:160px; overflow:hidden;">
+    <div style="
+        position:absolute;
+        right:-500px;
+        top:20px;
+        animation: drive 3s linear forwards;
+        font-size: 120px;">
+        🏎️💨
+    </div>
+</div>
+
 <style>
-@keyframes move-car {
-    0% { left: 100%; }
-    100% { left: -200px; }
-}
-.car-animation {
-    position: fixed;
-    top: 40%;
-    left: 100%;
-    width: 200px;
-    animation: move-car 5s linear forwards;
-    z-index: 9999;
+@keyframes drive {
+    0% { right: -500px; }
+    100% { right: 100%; }
 }
 </style>
-<div class="car-animation">🏎️💨</div>
-''', unsafe_allow_html=True)
+"""
+st.markdown(car_animation, unsafe_allow_html=True)
+time.sleep(4.2)
+
+
+
+# Cargar los datos
+@st.cache_data
+def load_data():
+    df = pd.read_csv("F1_1950s_Race_Results_FULL.csv")
+    df["Date_Parsed"] = pd.to_datetime(df["Date"], format="%d %b %Y", errors='coerce')
+    return df.dropna(subset=["Date_Parsed"])
+
+races_df = load_data()
+races_df = load_data()
+
 
 # ======================= CONFIGURACIÓN =======================
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
