@@ -321,4 +321,5 @@ if i < len(trivia_preguntas):
             st.session_state.pregunta_actual += 1
             st.session_state.respuesta_dada = False
             st.session_state.opcion_elegida = None
-            st.session_state.e_
+            st.session_state.evitar_doble_rerun
+
