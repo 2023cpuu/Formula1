@@ -94,22 +94,31 @@ with st.expander("📋 Ver todos los resultados de los 50s"):
     
 # 🏁 ¿Cuál fue la carrera más cercana a tu cumpleaños?
 
-# Convertir fecha de cumpleaños (sin importar año)
+# Fecha del usuario sin año
 birth_date_str = f"{birth_day:02d}-{month_number:02d}"
 
-# Calcular la diferencia en días entre el cumpleaños y cada carrera (ignorando el año)
+# Calcular diferencia con cada carrera
 races_df["Birthday_Diff"] = races_df["Date_Parsed"].dt.strftime("%d-%m").apply(
     lambda x: abs(datetime.strptime(x, "%d-%m") - datetime.strptime(birth_date_str, "%d-%m")).days
 )
 
-# Seleccionar la carrera más cercana
+# Carrera más cercana
 closest_race = races_df.sort_values("Birthday_Diff").iloc[0]
 
-# Traducir nombre del Grand Prix
+# Traducción del nombre del GP
 gp_name = gp_translation.get(closest_race["Grand Prix"], f"el GP de {closest_race['Grand Prix']}")
 
-# Crear frase con capitalización manual de la primera letra
-texto = f"{gp_name} en {closest_race['Date']} fue la carrera más cercana a tu cumple."
+# ✅ Formatear fecha en español
+fecha = closest_race["Date_Parsed"]
+month_translation = {
+    1: "enero", 2: "febrero", 3: "marzo", 4: "abril",
+    5: "mayo", 6: "junio", 7: "julio", 8: "agosto",
+    9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
+}
+fecha_formateada = f"{fecha.day} de {month_translation[fecha.month]} de {fecha.year}"
+
+# Frase final
+texto = f"{gp_name} en {fecha_formateada} fue la carrera más cercana a tu cumple."
 texto = texto[0].upper() + texto[1:]
 
 # Mostrar resultado
@@ -117,5 +126,32 @@ st.subheader("📅 Carrera más cercana a tu cumpleaños:")
 st.info(f"""
 {texto}
 Ganó **{closest_race['Winner']}** con **{closest_race['Team']}**.
+""")
+# 📜 ¿Cuál fue el primer GP de los años 50?
+
+# Buscar la primera carrera por fecha
+first_race = races_df.sort_values("Date_Parsed").iloc[0]
+
+# Traducir nombre del Grand Prix
+gp_name = gp_translation.get(first_race["Grand Prix"], f"el GP de {first_race['Grand Prix']}")
+
+# Traducir la fecha al español
+fecha = first_race["Date_Parsed"]
+month_translation = {
+    1: "enero", 2: "febrero", 3: "marzo", 4: "abril",
+    5: "mayo", 6: "junio", 7: "julio", 8: "agosto",
+    9: "septiembre", 10: "octubre", 11: "noviembre", 12: "diciembre"
+}
+fecha_formateada = f"{fecha.day} de {month_translation[fecha.month]} de {fecha.year}"
+
+# Armar texto final con capitalización
+texto = f"{gp_name} abrió la década el {fecha_formateada}."
+texto = texto[0].upper() + texto[1:]
+
+# Mostrar resultado
+st.subheader("📜 Primer GP de los años 50:")
+st.info(f"""
+{texto}
+Ganó **{first_race['Winner']}** con **{first_race['Team']}**.
 """)
 
