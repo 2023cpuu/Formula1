@@ -254,9 +254,9 @@ import streamlit as st
 import time
 
 import streamlit as st
+
 st.subheader("🧠 Trivia")
 
-# Preguntas y respuestas
 trivia_preguntas = [
     {
         "pregunta": "¿Qué piloto ganó más carreras en la década de 1950?",
@@ -272,61 +272,44 @@ trivia_preguntas = [
         "pregunta": "¿Qué país sudamericano albergó Grandes Premios en los años 50?",
         "opciones": ["Brasil", "Argentina", "Chile", "Perú"],
         "respuesta": "Argentina"
-    },
-    {
-        "pregunta": "¿Cuál de estas escuderías tuvo más victorias en los años 50?",
-        "opciones": ["Maserati", "Ferrari", "Mercedes", "Alfa Romeo"],
-        "respuesta": "Ferrari"
-    },
-    {
-        "pregunta": "¿Qué piloto ganó el campeonato de 1958, el primero con sistema de puntuación moderna?",
-        "opciones": ["Stirling Moss", "Mike Hawthorn", "Luigi Musso", "Tony Brooks"],
-        "respuesta": "Mike Hawthorn"
     }
 ]
 
-# Inicialización de estados
-if "trivia_pregunta_idx" not in st.session_state:
-    st.session_state.trivia_pregunta_idx = 0
-if "trivia_respuesta_seleccionada" not in st.session_state:
-    st.session_state.trivia_respuesta_seleccionada = None
-if "trivia_estado" not in st.session_state:
-    st.session_state.trivia_estado = "esperando"  # puede ser: esperando, correcto, incorrecto
+# Inicializar variables de estado solo si no existen
+if "trivia_idx" not in st.session_state:
+    st.session_state.trivia_idx = 0
+if "mostrar_resultado" not in st.session_state:
+    st.session_state.mostrar_resultado = False
+if "es_correcta" not in st.session_state:
+    st.session_state.es_correcta = False
 
-# Lógica principal
-idx = st.session_state.trivia_pregunta_idx
+# Mostrar pregunta actual
+idx = st.session_state.trivia_idx
 
 if idx < len(trivia_preguntas):
     pregunta = trivia_preguntas[idx]
 
     st.markdown(f"**{pregunta['pregunta']}**")
-
-    st.session_state.trivia_respuesta_seleccionada = st.radio(
+    respuesta_usuario = st.radio(
         "Selecciona una opción:",
-        options=pregunta["opciones"],
-        index=0,
-        key=f"radio_{idx}"
+        pregunta["opciones"],
+        key=f"respuesta_{idx}"
     )
 
-    if st.button("Comprobar respuesta", key=f"comprobar_{idx}"):
-        if st.session_state.trivia_respuesta_seleccionada == pregunta["respuesta"]:
-            st.session_state.trivia_estado = "correcto"
+    if not st.session_state.mostrar_resultado:
+        if st.button("Comprobar respuesta"):
+            st.session_state.es_correcta = respuesta_usuario == pregunta["respuesta"]
+            st.session_state.mostrar_resultado = True
+    else:
+        if st.session_state.es_correcta:
+            st.success("✅ ¡Correcto!")
         else:
-            st.session_state.trivia_estado = "incorrecto"
+            st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta['respuesta']}")
 
-    if st.session_state.trivia_estado == "correcto":
-        st.success("✅ ¡Correcto!")
-        if st.button("Siguiente", key=f"siguiente_{idx}"):
-            st.session_state.trivia_pregunta_idx += 1
-            st.session_state.trivia_estado = "esperando"
-            st.session_state.trivia_respuesta_seleccionada = None
-
-    elif st.session_state.trivia_estado == "incorrecto":
-        st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta['respuesta']}")
-        if st.button("Siguiente", key=f"siguiente_{idx}"):
-            st.session_state.trivia_pregunta_idx += 1
-            st.session_state.trivia_estado = "esperando"
-            st.session_state.trivia_respuesta_seleccionada = None
+        if st.button("Siguiente pregunta"):
+            st.session_state.trivia_idx += 1
+            st.session_state.mostrar_resultado = False
+            st.session_state.es_correcta = False
 
 else:
     st.success("🎉 ¡Has completado la trivia!")
