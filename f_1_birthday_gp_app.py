@@ -33,7 +33,7 @@ st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
 st.markdown(
     """
     <style>
-    body {
+    .stApp {
         background-image: 
             linear-gradient(45deg, #fff 25%, transparent 25%),
             linear-gradient(-45deg, #fff 25%, transparent 25%),
