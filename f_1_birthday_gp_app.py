@@ -1,61 +1,82 @@
 import streamlit as st
 import time
 
-# Configurar página
+# Configurar la página
 st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
 
-# Fondo a cuadros blanco y negro
+# Fondo tipo bandera de cuadros (solo fondo, sin afectar texto)
 st.markdown("""
     <style>
-        body {
-            background-image: repeating-linear-gradient(
-                45deg,
-                #ffffff 0,
-                #ffffff 20px,
-                #000000 20px,
-                #000000 40px
-            );
-            background-size: 40px 40px;
-        }
-        /* Para el contenido principal */
-        .stApp {
-            background-color: rgba(255,255,255,0.95);
-            padding: 2rem;
-            border-radius: 15px;
-            margin: 1rem;
-        }
+    html, body, .stApp {
+        background-image: 
+            linear-gradient(45deg, #000 25%, transparent 25%),
+            linear-gradient(-45deg, #000 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #000 75%),
+            linear-gradient(-45deg, transparent 75%, #000 75%);
+        background-size: 40px 40px;
+        background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+        background-color: white;
+    }
+
+    .main-content {
+        background-color: rgba(255,255,255,0.9);
+        padding: 2rem;
+        border-radius: 15px;
+    }
+
+    /* Evitar que el emoji cruce encima del título */
+    .car-animation {
+        position:relative;
+        height:130px;
+        overflow:hidden;
+        z-index:1;
+    }
+
+    @keyframes drive {
+        0% { left: -200px; }
+        100% { left: 100%; }
+    }
+
+    .car {
+        position:absolute;
+        left:-200px;
+        top:30px;
+        animation: drive 3s linear forwards;
+        font-size: 100px;
+    }
+
+    .titulo {
+        text-align: center;
+        font-size: 3em;
+        margin-bottom: 0.2em;
+        color: black;
+        z-index: 2;
+    }
+
+    .car-static {
+        text-align: center;
+        font-size: 80px;
+        margin-top: -10px;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# ANIMACIÓN del carrito (una sola vez)
-car_animation = """
-<div style="position:relative; height:120px; overflow:hidden;">
-    <div style="
-        position:absolute;
-        left:-200px;
-        top:20px;
-        animation: drive 3s linear forwards;
-        font-size: 100px;">
-        🏎️💨
-    </div>
+# ANIMACIÓN del carrito
+st.markdown("""
+<div class="car-animation">
+    <div class="car">🏎️💨</div>
 </div>
-
-<style>
-@keyframes drive {
-    0% { left: -200px; }
-    100% { left: 100%; }
-}
-</style>
-"""
-st.markdown(car_animation, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 time.sleep(3.2)
 
-# TÍTULO con carrito decorativo
-st.markdown("""
-<h1 style='text-align: center; font-size: 3em; margin-bottom: 0.3em; color: black;'>La Fórmula de los 50s</h1>
-<div style='text-align:center; font-size:100px; margin-top:-10px;'>🏎️</div>
-""", unsafe_allow_html=True)
-
+# CONTENIDO PRINCIPAL con fondo blanco translúcido
+with st.container():
+    st.markdown("""
+    <div class="main-content">
+        <div class="titulo">La Fórmula de los 50s</div>
+        <div class="car-static">🏎️</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 with st.container():
