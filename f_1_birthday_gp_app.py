@@ -30,6 +30,22 @@ time.sleep(4.2)
 
 # CONFIGURACIÓN INICIAL
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
+st.markdown(
+    """
+    <style>
+    body {
+        background-image: 
+            linear-gradient(45deg, #fff 25%, transparent 25%),
+            linear-gradient(-45deg, #fff 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #000 75%),
+            linear-gradient(-45deg, transparent 75%, #000 75%);
+        background-size: 60px 60px;
+        background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 st.title("🏁 Grand Prix de los años 50")
 
 # CARGA DE DATOS
