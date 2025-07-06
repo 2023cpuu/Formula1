@@ -203,7 +203,7 @@ with st.expander("📊 Ver el top 5 de escuderías más ganadoras"):
 
 # 🌍 ¿En qué país hubo más carreras?
 
-# Primero, traducimos cada Grand Prix a país (basado en el mismo gp_translation)
+# Diccionario de traducción GP → País
 gp_to_country = {
     "British": "Reino Unido",
     "French": "Francia",
@@ -220,10 +220,27 @@ gp_to_country = {
     "Moroccan": "Marruecos"
 }
 
-# Crear nueva columna con país traducido
+# Diccionario de coordenadas (para el mapa)
+country_coords = {
+    "Reino Unido": [51.5, -0.1],
+    "Francia": [48.85, 2.35],
+    "Italia": [41.9, 12.5],
+    "Alemania": [52.52, 13.4],
+    "Mónaco": [43.73, 7.42],
+    "Bélgica": [50.85, 4.35],
+    "Países Bajos": [52.37, 4.89],
+    "Suiza": [46.95, 7.45],
+    "Argentina": [-34.6, -58.38],
+    "Estados Unidos": [39.8, -86.1],
+    "España": [40.42, -3.7],
+    "Portugal": [38.72, -9.14],
+    "Marruecos": [33.58, -7.62]
+}
+
+# Traducir Grand Prix a país
 races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
 
-# Contar cuántas carreras hubo en cada país
+# Contar cuántas carreras hubo por país
 country_counts = races_df["País"].value_counts()
 top_country = country_counts.idxmax()
 top_count = country_counts.max()
@@ -236,8 +253,53 @@ texto = texto[0].upper() + texto[1:]
 st.subheader("🌍 País con más carreras en los 50s:")
 st.success(texto)
 
-# Opcional: top 5 países
+# Mostrar tabla con el top 5
 with st.expander("📊 Ver el top 5 de países con más carreras"):
-    st.table(country_counts.head(5).reset_index(names=["País", "Cantidad de carreras"]))
+    st.table(
+        country_counts.head(5)
+        .reset_index()
+        .rename(columns={"index": "País", "País": "Cantidad de carreras"})
+    )
 
+# Mostrar circuitos por país
+with st.expander("🏟️ Ver los circuitos usados en cada país"):
+    circuitos_por_pais = races_df.groupby("País")["Circuit"].unique().dropna()
+    for pais, circuitos in circuitos_por_pais.items():
+        st.markdown(f"**{pais}**: {', '.join(circuitos)}")
 
+# Crear DataFrame para el mapa
+map_data = []
+for country, count in country_counts.items():
+    if country in country_coords:
+        lat, lon = country_coords[country]
+        map_data.append({"País": country, "Lat": lat, "Lon": lon, "Carreras": count})
+
+map_df = pd.DataFrame(map_data)
+
+# Mostrar mapa
+st.subheader("🗺️ Mapa de países con carreras en los años 50")
+
+import pydeck as pdk
+
+layer = pdk.Layer(
+    "ScatterplotLayer",
+    data=map_df,
+    get_position="[Lon, Lat]",
+    get_radius="Carreras * 50000",
+    get_fill_color="[200, 30, 0, 160]",
+    pickable=True,
+    auto_highlight=True
+)
+
+view_state = pdk.ViewState(
+    latitude=20,
+    longitude=0,
+    zoom=1.2,
+    pitch=0
+)
+
+st.pydeck_chart(pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={"text": "{País}: {Carreras} carreras"}
+))
