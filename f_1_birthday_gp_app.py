@@ -6,7 +6,7 @@ import time
 import random
 
 # Configurar página
-st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
+st.set_page_config(st.title("🏁 La Fórmula de los 50s"), page_icon="🏁")
 st.markdown(
     """
     <style>
