@@ -11,81 +11,56 @@ st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
 import streamlit as st
 import time
 
-# ==== ANIMACIÓN DEL CARRITO F1 ====
-car_animation = """
-<div style="position:relative; height:160px; overflow:hidden;">
-    <div style="
-        position:absolute;
-        right:-300px;
-        top:20px;
-        animation: drive 3s linear forwards;
-        font-size: 120px;">
-        🏎️💨
-    </div>
-</div>
-<style>
-@keyframes drive {
-    0% { right: -300px; }
-    100% { right: 100%; }
-}
-</style>
-"""
-st.markdown(car_animation, unsafe_allow_html=True)
-time.sleep(3.5)  # Espera que acabe la animación 1
-
-car_return = """
+# ========== ANIMACIÓN DEL CARRITO ENTRANDO (IZQUIERDA → DERECHA) ==========
+car_forward = """
 <div style="position:relative; height:160px; overflow:hidden;">
     <div style="
         position:absolute;
         left:-300px;
         top:20px;
-        animation: returnDrive 3s linear forwards;
+        animation: driveRight 3s linear forwards;
         font-size: 120px;">
         🏎️💨
     </div>
 </div>
 <style>
-@keyframes returnDrive {
+@keyframes driveRight {
     0% { left: -300px; }
     100% { left: 100%; }
 }
 </style>
 """
-st.markdown(car_return, unsafe_allow_html=True)
-time.sleep(3.5)  # Espera que acabe la animación 2
+st.markdown(car_forward, unsafe_allow_html=True)
+time.sleep(3.2)
 
-# ==== CARRITO ESTÁTICO BAJO EL TÍTULO ====
-st.markdown("<div style='text-align:center; font-size:120px; margin-top: -60px;'>🏎️</div>", unsafe_allow_html=True)
-st.title("🏁 La Fórmula de los 50s")
-st.markdown(
-    """
-    <style>
-    body {
-        background-color: white;
-    }
+# ========== ANIMACIÓN DEL CARRITO SALIENDO (DERECHA → IZQUIERDA) ==========
+car_backward = """
+<div style="position:relative; height:160px; overflow:hidden;">
+    <div style="
+        position:absolute;
+        right:-300px;
+        top:20px;
+        animation: driveLeft 3s linear forwards;
+        font-size: 120px;">
+        🏎️💨
+    </div>
+</div>
+<style>
+@keyframes driveLeft {
+    0% { right: -300px; }
+    100% { right: 100%; }
+}
+</style>
+"""
+st.markdown(car_backward, unsafe_allow_html=True)
+time.sleep(3.2)
 
-    .stApp {
-        background-image: linear-gradient(45deg, #fff 25%, #000 25%, #000 50%, #fff 50%, #fff 75%, #000 75%);
-        background-size: 60px 60px;
-        background-attachment: fixed;
-    }
+# ========== TÍTULO CENTRAL + AUTO ESTÁTICO BAJO EL TÍTULO ==========
+st.markdown("""
+<h1 style='text-align: center; font-size: 3em;'>La Fórmula de los 50s</h1>
+<div style='text-align:center; font-size:110px; margin-top:-40px;'>🏎️</div>
+""", unsafe_allow_html=True)
 
-    .block-container {
-        background-color: rgba(255, 255, 255, 0.95);
-        padding: 3rem;
-        border-radius: 15px;
-        box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
-    }
-
-    .block-container h1, .block-container h2, .block-container h3,
-    .block-container h4, .block-container h5, .block-container h6,
-    .block-container p, .block-container label, .block-container div {
-        color: black !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 # 🎨 Fondo tipo bandera a cuadros
 st.markdown("""
