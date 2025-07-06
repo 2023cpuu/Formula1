@@ -240,6 +240,6 @@ df.index += 1
 st.table(df)
 
 st.altair_chart(chart, use_container_width=True)
-    else:
-        st.warning(f"{piloto_seleccionado} no ganó ningún GP en los años 50.")
+else:
+    st.warning(f"{piloto_seleccionado} no ganó ningún GP en los años 50.")
 
