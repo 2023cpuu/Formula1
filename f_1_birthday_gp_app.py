@@ -10,8 +10,8 @@ import random
 st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
 st.title("🏁 La Fórmula de los 50s")
 st.image(
-    "https://upload.wikimedia.org/wikipedia/commons/1/1f/Start_1953_French_GP.jpg",
-    caption="Inicio del GP de Francia, 1953",
+    "https://upload.wikimedia.org/wikipedia/commons/9/90/Ferrari_500_F2_1952_Juan_Manuel_Fangio.jpg",
+    caption="Ferrari 500 F2 (Juan Manuel Fangio, 1952)",
     use_container_width=True
 )
 st.markdown(
