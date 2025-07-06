@@ -36,6 +36,25 @@ def load_data():
     return df.dropna(subset=["Date_Parsed"])
 
 races_df = load_data()
+races_df = load_data()
+
+# ✅ Diccionario de traducción de Grand Prix
+gp_translation = {
+    "British": "el GP de Gran Bretaña",
+    "French": "el GP de Francia",
+    "Italian": "el GP de Italia",
+    "German": "el GP de Alemania",
+    "Monaco": "el GP de Mónaco",
+    "Belgian": "el GP de Bélgica",
+    "Dutch": "el GP de los Países Bajos",
+    "Swiss": "el GP de Suiza",
+    "Argentine": "el GP de Argentina",
+    "Indianapolis 500": "las 500 Millas de Indianápolis",
+    "Spanish": "el GP de España",
+    "Portuguese": "el GP de Portugal",
+    "Moroccan": "el GP de Marruecos",
+    # Agrega más si los ves en tu CSV
+}
 
 # Título de la app
 st.title("🏁 La fórmula de los 50s")
