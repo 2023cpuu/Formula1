@@ -242,11 +242,17 @@ races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
 
 # Contar cuántas carreras hubo por país
 country_counts = races_df["País"].value_counts()
-top_country = country_counts.idxmax()
 top_count = country_counts.max()
+top_countries = country_counts[country_counts == top_count].index.tolist()
 
-# Frase capitalizada
-texto = f"{top_country} fue el país con más Grandes Premios: {top_count} en total."
+# Generar mensaje de acuerdo si hay empate o no
+if len(top_countries) == 1:
+    texto = f"{top_countries[0]} fue el país con más Grandes Premios: {top_count} en total."
+else:
+    lista_paises = " y ".join(top_countries)
+    texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
+
+# Capitalizar frase
 texto = texto[0].upper() + texto[1:]
 
 # Mostrar resultado
@@ -261,11 +267,12 @@ with st.expander("📊 Ver el top 5 de países con más carreras"):
         .rename(columns={"index": "País", "País": "Cantidad de carreras"})
     )
 
-# Mostrar circuitos por país
-with st.expander("🏟️ Ver los circuitos usados en cada país"):
-    circuitos_por_pais = races_df.groupby("País")["Circuit"].unique().dropna()
-    for pais, circuitos in circuitos_por_pais.items():
-        st.markdown(f"**{pais}**: {', '.join(circuitos)}")
+# Mostrar Grand Prix por país (como reemplazo del circuito)
+with st.expander("🏟️ Ver los Grand Prix realizados en cada país"):
+    gp_por_pais = races_df.groupby("País")["Grand Prix"].unique()
+    for pais, gps in gp_por_pais.items():
+        nombres = [f"GP de {gp_to_country.get(gp, gp)}" for gp in gps]
+        st.markdown(f"**{pais}**: {', '.join(nombres)}")
 
 # Crear DataFrame para el mapa
 map_data = []
@@ -297,6 +304,12 @@ view_state = pdk.ViewState(
     zoom=1.2,
     pitch=0
 )
+
+st.pydeck_chart(pdk.Deck(
+    layers=[layer],
+    initial_view_state=view_state,
+    tooltip={"text": "{País}: {Carreras} carreras"}
+))
 
 st.pydeck_chart(pdk.Deck(
     layers=[layer],
