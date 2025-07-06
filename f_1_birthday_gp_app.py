@@ -239,7 +239,7 @@ df = df.sort_values("Victorias", ascending=False).drop_duplicates()
 df.index += 1
 st.table(df)
 
-        st.altair_chart(chart, use_container_width=True)
+st.altair_chart(chart, use_container_width=True)
     else:
         st.warning(f"{piloto_seleccionado} no ganó ningún GP en los años 50.")
 
