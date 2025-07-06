@@ -8,6 +8,54 @@ import random
 # Configurar página
 # Configurar página (título de pestaña)
 st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
+import streamlit as st
+import time
+
+# ==== ANIMACIÓN DEL CARRITO F1 ====
+car_animation = """
+<div style="position:relative; height:160px; overflow:hidden;">
+    <div style="
+        position:absolute;
+        right:-300px;
+        top:20px;
+        animation: drive 3s linear forwards;
+        font-size: 120px;">
+        🏎️💨
+    </div>
+</div>
+<style>
+@keyframes drive {
+    0% { right: -300px; }
+    100% { right: 100%; }
+}
+</style>
+"""
+st.markdown(car_animation, unsafe_allow_html=True)
+time.sleep(3.5)  # Espera que acabe la animación 1
+
+car_return = """
+<div style="position:relative; height:160px; overflow:hidden;">
+    <div style="
+        position:absolute;
+        left:-300px;
+        top:20px;
+        animation: returnDrive 3s linear forwards;
+        font-size: 120px;">
+        🏎️💨
+    </div>
+</div>
+<style>
+@keyframes returnDrive {
+    0% { left: -300px; }
+    100% { left: 100%; }
+}
+</style>
+"""
+st.markdown(car_return, unsafe_allow_html=True)
+time.sleep(3.5)  # Espera que acabe la animación 2
+
+# ==== CARRITO ESTÁTICO BAJO EL TÍTULO ====
+st.markdown("<div style='text-align:center; font-size:120px; margin-top: -60px;'>🏎️</div>", unsafe_allow_html=True)
 st.title("🏁 La Fórmula de los 50s")
 st.markdown(
     """
