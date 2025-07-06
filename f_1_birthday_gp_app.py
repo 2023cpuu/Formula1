@@ -207,7 +207,7 @@ country_coords = {
     "Marruecos": [33.58, -7.62]
 }
 
-# ======================= MAPA INTERACTIVO =======================
+# ======================= MAPA INTERACTIVO (mejorado) =======================
 st.subheader("🗺️ Mapa de países con carreras en los años 50")
 
 map_data = []
@@ -218,21 +218,19 @@ for country, count in country_counts.items():
             "País": country,
             "Lat": lat,
             "Lon": lon,
-            "Carreras": count,
-            "Icono": "📍"
+            "Carreras": count
         })
 map_df = pd.DataFrame(map_data)
 
-# Capa con íconos tipo texto
+# Capa de puntos más discretos
 layer = pdk.Layer(
-    "TextLayer",
+    "ScatterplotLayer",
     data=map_df,
     get_position='[Lon, Lat]',
-    get_text='Icono',
-    get_size=32,
-    get_color=[200, 30, 0],
-    get_angle=0,
-    get_alignment_baseline="'bottom'",
+    get_radius="Carreras * 30000",
+    get_fill_color=[255, 0, 0, 180],
+    pickable=True,
+    auto_highlight=True
 )
 
 view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
@@ -241,6 +239,7 @@ st.pydeck_chart(pdk.Deck(
     initial_view_state=view_state,
     tooltip={"text": "{País}: {Carreras} carreras"}
 ))
+
 
 
 st.subheader("🧠 Trivia")
