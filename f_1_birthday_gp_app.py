@@ -198,6 +198,15 @@ with st.container():
             st.markdown(f"**{pais}**: {', '.join(sorted(circuitos))}")
         st.caption("📝 *Nota: Se muestran todos los circuitos usados por país en los años 50.*")
 
+# ======================= COORDENADAS DE PAÍSES =======================
+country_coords = {
+    "Reino Unido": [51.5, -0.1], "Francia": [48.85, 2.35], "Italia": [41.9, 12.5],
+    "Alemania": [52.52, 13.4], "Mónaco": [43.73, 7.42], "Bélgica": [50.85, 4.35],
+    "Países Bajos": [52.37, 4.89], "Suiza": [46.95, 7.45], "Argentina": [-34.6, -58.38],
+    "Estados Unidos": [39.8, -86.1], "España": [40.42, -3.7], "Portugal": [38.72, -9.14],
+    "Marruecos": [33.58, -7.62]
+}
+
 # ======================= MAPA INTERACTIVO =======================
 st.subheader("🗺️ Mapa de países con carreras en los años 50")
 
@@ -232,6 +241,7 @@ st.pydeck_chart(pdk.Deck(
     initial_view_state=view_state,
     tooltip={"text": "{País}: {Carreras} carreras"}
 ))
+
 
 st.subheader("🧠 Trivia")
 
