@@ -176,39 +176,25 @@ with st.expander("🏟️ Ver los circuitos usados en cada país"):
 # 🔍 Explora pilotos y escuderías
 st.subheader("🔍 Explora pilotos y escuderías")
 
-# Desplegable de pilotos
+# PILOTOS
 pilotos_unicos = sorted(races_df["Winner"].dropna().unique())
-piloto_seleccionado = st.selectbox("Selecciona un piloto", [""] + pilotos_unicos)
+piloto_seleccionado = st.selectbox("Selecciona un piloto", pilotos_unicos, index=None, placeholder="Elige un piloto...")
 
 if piloto_seleccionado:
     piloto_df = races_df[races_df["Winner"] == piloto_seleccionado]
     if not piloto_df.empty:
-        piloto_chart = alt.Chart(piloto_df).mark_bar().encode(
-            x=alt.X("Team", sort="-y", title="Escudería"),
-            y=alt.Y("count()", title="Victorias"),
-            tooltip=["Team", "count()"]
-        ).properties(width=500, height=300)
-        st.altair_chart(piloto_chart, use_container_width=True)
-
         piloto_top = piloto_df["Team"].value_counts().reset_index()
         piloto_top.index += 1
         piloto_top.columns = ["Escudería", "Victorias"]
         st.table(piloto_top)
 
-# Desplegable de escuderías
+# ESCUDERÍAS
 equipos_unicos = sorted(races_df["Team"].dropna().unique())
-equipo_seleccionado = st.selectbox("Selecciona una escudería", [""] + equipos_unicos)
+equipo_seleccionado = st.selectbox("Selecciona una escudería", equipos_unicos, index=None, placeholder="Elige una escudería...")
 
 if equipo_seleccionado:
     team_df = races_df[races_df["Team"] == equipo_seleccionado]
     if not team_df.empty:
-        team_chart = alt.Chart(team_df).mark_bar().encode(
-            x=alt.X("Winner", sort="-y", title="Piloto"),
-            y=alt.Y("count()", title="Victorias"),
-            tooltip=["Winner", "count()"]
-        ).properties(width=500, height=300)
-        st.altair_chart(team_chart, use_container_width=True)
-
         team_top = team_df["Winner"].value_counts().reset_index()
         team_top.index += 1
         team_top.columns = ["Piloto", "Victorias"]
