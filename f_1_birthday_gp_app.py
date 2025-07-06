@@ -257,7 +257,7 @@ import streamlit as st
 
 st.subheader("🧠 Trivia")
 
-# Preguntas y respuestas
+# Preguntas
 trivia_preguntas = [
     {
         "pregunta": "¿Qué piloto ganó más carreras en la década de 1950?",
@@ -289,32 +289,29 @@ trivia_preguntas = [
 # Estado inicial
 if "pregunta_actual" not in st.session_state:
     st.session_state.pregunta_actual = 0
-if "respuesta_dada" not in st.session_state:
-    st.session_state.respuesta_dada = False
 if "opcion_elegida" not in st.session_state:
     st.session_state.opcion_elegida = None
-if "forzar_rerun" not in st.session_state:
-    st.session_state.forzar_rerun = False
+if "mostrar_respuesta" not in st.session_state:
+    st.session_state.mostrar_respuesta = False
 
-# 🧠 FORZAR RERUN SOLO UNA VEZ SI ES NECESARIO
-if st.session_state.forzar_rerun:
-    st.session_state.forzar_rerun = False
-    st.rerun()
-
-# Obtener la pregunta actual
+# Mostrar pregunta actual
 i = st.session_state.pregunta_actual
 
 if i < len(trivia_preguntas):
     pregunta = trivia_preguntas[i]
     st.markdown(f"### {pregunta['pregunta']}")
 
-    # Si aún no respondió
-    if not st.session_state.respuesta_dada:
-        seleccion = st.radio("Selecciona una opción:", pregunta["opciones"], key=f"radio_{i}")
+    st.session_state.opcion_elegida = st.radio(
+        "Selecciona una opción:",
+        pregunta["opciones"],
+        index=0,
+        key=f"pregunta_{i}"
+    )
+
+    if not st.session_state.mostrar_respuesta:
         if st.button("Comprobar respuesta"):
-            st.session_state.opcion_elegida = seleccion
-            st.session_state.respuesta_dada = True
-            st.session_state.forzar_rerun = True
+            st.session_state.mostrar_respuesta = True
+            st.experimental_rerun()
     else:
         correcta = pregunta["respuesta"]
         if st.session_state.opcion_elegida == correcta:
@@ -322,10 +319,10 @@ if i < len(trivia_preguntas):
         else:
             st.error(f"❌ Incorrecto. La respuesta correcta era: {correcta}")
 
-        if st.button("Siguiente pregunta"):
+        if st.button("Siguiente"):
             st.session_state.pregunta_actual += 1
-            st.session_state.respuesta_dada = False
-            st.session_state.opcion_elegida = None
-            st.session_state.forzar_rerun = True
+            st.session_state.mostrar_respuesta = False
+            st.experimental_rerun()
 else:
     st.success("🎉 ¡Has completado la trivia!")
+
