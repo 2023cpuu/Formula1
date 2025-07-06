@@ -34,13 +34,14 @@ st.markdown(
     """
     <style>
     .stApp {
+        background-color: #ffffff;
         background-image: 
-            linear-gradient(45deg, #fff 25%, transparent 25%),
-            linear-gradient(-45deg, #fff 25%, transparent 25%),
-            linear-gradient(45deg, transparent 75%, #000 75%),
-            linear-gradient(-45deg, transparent 75%, #000 75%);
+            linear-gradient(90deg, #000 25%, transparent 25%, transparent 75%, #000 75%),
+            linear-gradient(90deg, #000 25%, transparent 25%, transparent 75%, #000 75%),
+            linear-gradient(0deg, #000 25%, transparent 25%, transparent 75%, #000 75%),
+            linear-gradient(0deg, #000 25%, transparent 25%, transparent 75%, #000 75%);
         background-size: 60px 60px;
-        background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+        background-position: 0 0, 30px 30px, 0 0, 30px 30px;
     }
     </style>
     """,
