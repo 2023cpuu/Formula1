@@ -250,17 +250,17 @@ else:
 # TRIVIA
 st.subheader("🧠 Trivia")
 
-mostrar_pregunta = st.checkbox("Mostrar trivia")
+pregunta = "¿Cuál fue el primer país fuera de Europa en albergar un Grand Prix en los años 50?"
+opciones = ["Argentina", "Estados Unidos", "Marruecos", "India"]
+respuesta_correcta = "Argentina"
 
-if mostrar_pregunta:
-    pregunta = "¿Cuál fue el primer país fuera de Europa en albergar un Grand Prix en los años 50?"
-    opciones = ["Argentina", "Estados Unidos", "Marruecos", "India"]
-    respuesta_correcta = "Argentina"
+with st.form(key="trivia_form"):
+    respuesta_usuario = st.radio("¿Cuál fue el primer país fuera de Europa en albergar un GP en los años 50?", opciones)
+    submit = st.form_submit_button("Comprobar respuesta")
 
-    respuesta_usuario = st.radio("Elige tu respuesta:", opciones, key="trivia1")
+if submit:
+    if respuesta_usuario == respuesta_correcta:
+        st.success("🎉 ¡Correcto! Argentina fue el primer país fuera de Europa en tener un GP: en 1953.")
+    else:
+        st.error(f"❌ Incorrecto. La respuesta correcta es: {respuesta_correcta}.")
 
-    if st.button("Comprobar respuesta", key="btn_trivia1"):
-        if respuesta_usuario == respuesta_correcta:
-            st.success("🎉 ¡Correcto! Argentina fue el primer país fuera de Europa en tener un GP: en 1953.")
-        else:
-            st.error(f"❌ Incorrecto. La respuesta correcta es: {respuesta_correcta}.")
