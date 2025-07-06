@@ -37,7 +37,7 @@ st.markdown(
 
 # ======================= TÍTULO PRINCIPAL =======================
 st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
-st.image("15a40034-7d4a-4fb9-9951-264104ed8d30.png", caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
+st.image("alfa_romeo_1950.png", caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
 
 # ======================= ANIMACIÓN DE AUTO (derecha a izquierda) =======================
 import time  # Asegúrate de tener este importado arriba si no lo tienes
