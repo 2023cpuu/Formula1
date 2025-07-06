@@ -284,7 +284,7 @@ trivia_preguntas = [
         "respuesta": "Juan Manuel Fangio"
     },
     {
-        "pregunta": "¿En qué circuito se corrió el primer GP de la historia moderna en 1950?",
+        "pregunta": "¿En qué circuito se corrió el primer GP en 1950?",
         "opciones": ["Monza", "Silverstone", "Indianápolis", "Zandvoort"],
         "respuesta": "Silverstone"
     },
