@@ -8,8 +8,8 @@ import random
 # Configurar página
 # Configurar página (título de pestaña)
 st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
-# Título visible dentro de la app
 st.title("🏁 La Fórmula de los 50s")
+st.image("https://upload.wikimedia.org/wikipedia/commons/1/1f/Start_1953_French_GP.jpg", caption="Inicio del GP de Francia, 1953", use_column_width=True)
 st.markdown(
     """
     <style>
