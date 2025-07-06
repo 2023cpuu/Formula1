@@ -173,12 +173,15 @@ with st.expander("🏟️ Ver los circuitos usados en cada país"):
         st.markdown(f"**{pais}**: {', '.join(sorted(circuitos))}")
     st.caption("📝 *Nota: Se muestran todos los circuitos usados por país en los años 50.*")
 
-# CONSULTA INTERACTIVA POR PILOTO
+# 🔍 Explora pilotos y escuderías
 st.subheader("🔍 Explora pilotos y escuderías")
 
-piloto_input = st.text_input("Buscar por piloto (ej. Fangio):")
-if piloto_input:
-    piloto_df = races_df[races_df["Winner"].str.contains(piloto_input, case=False, na=False)]
+# Desplegable de pilotos
+pilotos_unicos = sorted(races_df["Winner"].dropna().unique())
+piloto_seleccionado = st.selectbox("Selecciona un piloto", [""] + pilotos_unicos)
+
+if piloto_seleccionado:
+    piloto_df = races_df[races_df["Winner"] == piloto_seleccionado]
     if not piloto_df.empty:
         piloto_chart = alt.Chart(piloto_df).mark_bar().encode(
             x=alt.X("Team", sort="-y", title="Escudería"),
@@ -191,13 +194,13 @@ if piloto_input:
         piloto_top.index += 1
         piloto_top.columns = ["Escudería", "Victorias"]
         st.table(piloto_top)
-    else:
-        st.warning("No se encontraron resultados para ese piloto.")
 
-# CONSULTA INTERACTIVA POR ESCUDERÍA
-team_input = st.text_input("Buscar por escudería (ej. Ferrari):")
-if team_input:
-    team_df = races_df[races_df["Team"].str.contains(team_input, case=False, na=False)]
+# Desplegable de escuderías
+equipos_unicos = sorted(races_df["Team"].dropna().unique())
+equipo_seleccionado = st.selectbox("Selecciona una escudería", [""] + equipos_unicos)
+
+if equipo_seleccionado:
+    team_df = races_df[races_df["Team"] == equipo_seleccionado]
     if not team_df.empty:
         team_chart = alt.Chart(team_df).mark_bar().encode(
             x=alt.X("Winner", sort="-y", title="Piloto"),
@@ -210,8 +213,7 @@ if team_input:
         team_top.index += 1
         team_top.columns = ["Piloto", "Victorias"]
         st.table(team_top)
-    else:
-        st.warning("No se encontraron resultados para esa escudería.")
+
 
 # PILOTOS QUE CORRIERON PARA MÁS DE UNA ESCUDERÍA
 st.subheader("👨‍🔧 Pilotos que corrieron para más de una escudería")
