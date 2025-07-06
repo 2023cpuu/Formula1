@@ -281,6 +281,6 @@ with st.container():
     else:
         st.info("¡Has completado la trivia!")
 
-  st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 
