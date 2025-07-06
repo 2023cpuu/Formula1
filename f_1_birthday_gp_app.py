@@ -286,7 +286,7 @@ trivia_preguntas = [
     }
 ]
 
-# Inicialización
+# Inicialización del estado
 if "pregunta_actual" not in st.session_state:
     st.session_state.pregunta_actual = 0
 if "respuesta_dada" not in st.session_state:
@@ -299,14 +299,14 @@ i = st.session_state.pregunta_actual
 
 if i < len(trivia_preguntas):
     pregunta = trivia_preguntas[i]
-    st.markdown(f"**{pregunta['pregunta']}**")
+    st.markdown(f"### {pregunta['pregunta']}")
 
     if not st.session_state.respuesta_dada:
-        seleccion = st.radio("Elige una opción:", pregunta["opciones"], key=f"radio_{i}")
+        seleccion = st.radio("Selecciona una opción:", pregunta["opciones"], key=f"radio_{i}")
         if st.button("Comprobar respuesta"):
             st.session_state.opcion_elegida = seleccion
             st.session_state.respuesta_dada = True
-            st.experimental_rerun()
+            st.rerun()
     else:
         correcta = pregunta["respuesta"]
         if st.session_state.opcion_elegida == correcta:
@@ -318,6 +318,6 @@ if i < len(trivia_preguntas):
             st.session_state.pregunta_actual += 1
             st.session_state.respuesta_dada = False
             st.session_state.opcion_elegida = None
-            st.experimental_rerun()
+            st.rerun()
 else:
     st.success("🎉 ¡Has completado la trivia!")
