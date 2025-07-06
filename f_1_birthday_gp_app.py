@@ -73,17 +73,10 @@ else:
 with st.expander("📋 Ver todos los resultados de los 50s"):
     st.dataframe(races_df[["Year", "Grand Prix", "Date", "Winner", "Team"]], use_container_width=True, height=600)
     
-# Calcular la fecha de cumpleaños (sin importar el año)
-birth_date_str = f"{birth_day:02d}-{month_number:02d}"
-races_df["Birthday_Diff"] = races_df["Date_Parsed"].dt.strftime("%d-%m")\
-    .apply(lambda x: abs(datetime.strptime(x, "%d-%m") - datetime.strptime(birth_date_str, "%d-%m")).days)
-
-closest_race = races_df.sort_values("Birthday_Diff").iloc[0]
-
 gp_name = gp_translation.get(closest_race["Grand Prix"], f"el GP de {closest_race['Grand Prix']}")
+
 st.subheader("🏁 Carrera más cercana a tu cumpleaños:")
 st.info(f"""
-El **{closest_race['Grand Prix']}** en {closest_race['Date']} fue la carrera más cercana a tu cumple.
+{gp_name} en {closest_race['Date']} fue la carrera más cercana a tu cumple.
 Ganó **{closest_race['Winner']}** con **{closest_race['Team']}**.
 """)
-
