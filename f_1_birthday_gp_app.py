@@ -275,7 +275,7 @@ trivia_preguntas = [
     }
 ]
 
-# Inicializar variables de estado solo si no existen
+# Inicializar estados
 if "trivia_idx" not in st.session_state:
     st.session_state.trivia_idx = 0
 if "mostrar_resultado" not in st.session_state:
@@ -283,23 +283,27 @@ if "mostrar_resultado" not in st.session_state:
 if "es_correcta" not in st.session_state:
     st.session_state.es_correcta = False
 
-# Mostrar pregunta actual
 idx = st.session_state.trivia_idx
 
 if idx < len(trivia_preguntas):
     pregunta = trivia_preguntas[idx]
+    opciones_con_placeholder = ["Selecciona una opción"] + pregunta["opciones"]
 
     st.markdown(f"**{pregunta['pregunta']}**")
     respuesta_usuario = st.radio(
-        "Selecciona una opción:",
-        pregunta["opciones"],
+        label="",
+        options=opciones_con_placeholder,
+        index=0,
         key=f"respuesta_{idx}"
     )
 
     if not st.session_state.mostrar_resultado:
         if st.button("Comprobar respuesta"):
-            st.session_state.es_correcta = respuesta_usuario == pregunta["respuesta"]
-            st.session_state.mostrar_resultado = True
+            if respuesta_usuario == "Selecciona una opción":
+                st.warning("Por favor, selecciona una opción antes de continuar.")
+            else:
+                st.session_state.es_correcta = respuesta_usuario == pregunta["respuesta"]
+                st.session_state.mostrar_resultado = True
     else:
         if st.session_state.es_correcta:
             st.success("✅ ¡Correcto!")
@@ -313,3 +317,4 @@ if idx < len(trivia_preguntas):
 
 else:
     st.success("🎉 ¡Has completado la trivia!")
+
