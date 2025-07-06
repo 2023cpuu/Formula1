@@ -9,25 +9,10 @@ import random
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
 st.markdown("""
     <style>
-    /* Fondo estilo bandera a cuadros */
-    html, body, .stApp {
-        background: repeating-conic-gradient(#000 0% 25%, white 0% 50%) 0 0 / 80px 80px;
-    }
-
-    /* Contenedor blanco translúcido centrado */
-    .custom-container {
-        background-color: rgba(255, 255, 255, 0.95);
-        padding: 3rem;
-        border-radius: 15px;
-        max-width: 900px;
-        margin: 3rem auto;
-        box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    }
-
-    /* Asegura contraste del texto */
-    .custom-container h1, .custom-container h2, .custom-container h3,
-    .custom-container p, .custom-container label, .custom-container .stMarkdown {
-        color: #111 !important;
+    .stApp {
+        background-image: url("https://i.imgur.com/ZLw1pDb.png");
+        background-size: 80px 80px;
+        background-attachment: fixed;
     }
     </style>
 """, unsafe_allow_html=True)
