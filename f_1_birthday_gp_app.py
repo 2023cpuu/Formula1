@@ -7,16 +7,35 @@ import random
 
 # Configurar página
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
-st.markdown("""
+st.markdown(
+    """
     <style>
+    body {
+        background-color: white;
+    }
+
     .stApp {
-        background-image: url("https://i.imgur.com/ZLw1pDb.png");
-        background-size: 80px 80px;
+        background-image: linear-gradient(45deg, #fff 25%, #000 25%, #000 50%, #fff 50%, #fff 75%, #000 75%);
+        background-size: 60px 60px;
         background-attachment: fixed;
     }
-    </style>
-""", unsafe_allow_html=True)
 
+    .block-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 3rem;
+        border-radius: 15px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+    }
+
+    .block-container h1, .block-container h2, .block-container h3,
+    .block-container h4, .block-container h5, .block-container h6,
+    .block-container p, .block-container label, .block-container div {
+        color: black !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # 🎨 Fondo tipo bandera a cuadros
 st.markdown("""
