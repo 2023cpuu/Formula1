@@ -30,18 +30,14 @@ time.sleep(4.2)
 
 # CONFIGURACIÓN INICIAL
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
+st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
+
 st.markdown(
     """
     <style>
     .stApp {
-        background-color: #ffffff;
-        background-image: 
-            linear-gradient(90deg, #000 25%, transparent 25%, transparent 75%, #000 75%),
-            linear-gradient(90deg, #000 25%, transparent 25%, transparent 75%, #000 75%),
-            linear-gradient(0deg, #000 25%, transparent 25%, transparent 75%, #000 75%),
-            linear-gradient(0deg, #000 25%, transparent 25%, transparent 75%, #000 75%);
+        background-image: repeating-conic-gradient(#000 0% 25%, white 0% 50%);
         background-size: 60px 60px;
-        background-position: 0 0, 30px 30px, 0 0, 30px 30px;
     }
     </style>
     """,
