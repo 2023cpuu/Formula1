@@ -4,7 +4,7 @@ import pydeck as pdk
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-# ======================= ANIMACIÓN CARRO =======================
+# ======================= ANIMACIÓN DE CARRO =======================
 st.markdown('''
 <style>
 @keyframes move-car {
@@ -20,10 +20,7 @@ st.markdown('''
     z-index: 9999;
 }
 </style>
-
-<div class="car-animation">
-    🏎️💨
-</div>
+<div class="car-animation">🏎️💨</div>
 ''', unsafe_allow_html=True)
 
 # ======================= CONFIGURACIÓN =======================
@@ -39,24 +36,35 @@ def load_data():
 
 races_df = load_data()
 
-# ======================= TRADUCCIONES =======================
+# ======================= DICCIONARIOS =======================
 gp_to_country = {
     "British": "Reino Unido", "French": "Francia", "Italian": "Italia", "German": "Alemania",
     "Monaco": "Mónaco", "Belgian": "Bélgica", "Dutch": "Países Bajos", "Swiss": "Suiza",
     "Argentine": "Argentina", "Indianapolis 500": "Estados Unidos", "Spanish": "España",
     "Portuguese": "Portugal", "Moroccan": "Marruecos"
 }
-gp_to_circuit = {
-    "British": "Silverstone Circuit", "French": "Reims-Gueux", "Italian": "Autodromo Nazionale Monza",
-    "German": "Nürburgring", "Monaco": "Circuit de Monaco", "Belgian": "Spa-Francorchamps",
-    "Dutch": "Zandvoort", "Swiss": "Bremgarten", "Argentine": "Autódromo Juan y Oscar Gálvez",
-    "Indianapolis 500": "Indianapolis Motor Speedway", "Spanish": "Pedralbes",
-    "Portuguese": "Boavista", "Moroccan": "Ain-Diab Circuit"
+
+gp_to_circuits = {
+    "Argentine": ["Autódromo Juan y Oscar Gálvez"],
+    "Belgian": ["Spa-Francorchamps"],
+    "British": ["Silverstone", "Aintree"],
+    "Dutch": ["Zandvoort"],
+    "French": ["Reims-Gueux", "Rouen-Les-Essarts"],
+    "German": ["Nürburgring", "AVUS"],
+    "Indianapolis 500": ["Indianapolis Motor Speedway"],
+    "Italian": ["Autodromo Nazionale Monza"],
+    "Monaco": ["Circuit de Monaco"],
+    "Moroccan": ["Ain-Diab Circuit"],
+    "Portuguese": ["Boavista", "Monsanto Park"],
+    "Spanish": ["Pedralbes"],
+    "Swiss": ["Bremgarten"]
 }
+
 month_translation = {
     "Jan": "Enero", "Feb": "Febrero", "Mar": "Marzo", "Apr": "Abril", "May": "Mayo", "Jun": "Junio",
     "Jul": "Julio", "Aug": "Agosto", "Sep": "Septiembre", "Oct": "Octubre", "Nov": "Noviembre", "Dec": "Diciembre"
 }
+
 country_coords = {
     "Reino Unido": [51.5, -0.1], "Francia": [48.85, 2.35], "Italia": [41.9, 12.5],
     "Alemania": [52.52, 13.4], "Mónaco": [43.73, 7.42], "Bélgica": [50.85, 4.35],
@@ -64,10 +72,10 @@ country_coords = {
     "Estados Unidos": [39.8, -86.1], "España": [40.42, -3.7], "Portugal": [38.72, -9.14],
     "Marruecos": [33.58, -7.62]
 }
-races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
-races_df["Circuito"] = races_df["Grand Prix"].map(gp_to_circuit)
 
-# ======================= ¿HUBO CARRERA EN TU CUMPLEAÑOS? =======================
+races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
+
+# ======================= ¿HUBO GP EN TU CUMPLE? =======================
 st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
 col1, col2 = st.columns(2)
 birth_day = col1.selectbox("Día", list(range(1, 32)), index=1)
@@ -134,11 +142,15 @@ with st.expander("📊 Ver el top 5 de países con más carreras"):
     top5_countries.columns = ["País", "Cantidad de carreras"]
     st.table(top5_countries)
 
+# ======================= CIRCUITOS POR PAÍS =======================
 with st.expander("🏟️ Ver los circuitos usados en cada país"):
-    circuitos_por_pais = races_df.groupby("País")["Circuito"].unique().dropna()
+    circuitos_por_pais = {}
+    for gp, pais in gp_to_country.items():
+        if gp in gp_to_circuits:
+            circuitos_por_pais.setdefault(pais, set()).update(gp_to_circuits[gp])
     for pais, circuitos in circuitos_por_pais.items():
-        st.markdown(f"**{pais}**: {', '.join(circuitos)}")
-    st.caption("📝 *Nota: 'GP de' se refiere al evento por país, no al nombre específico del circuito.*")
+        st.markdown(f"**{pais}**: {', '.join(sorted(circuitos))}")
+    st.caption("📝 *Nota: Se muestran todos los circuitos usados por país en los años 50.*")
 
 # ======================= MAPA INTERACTIVO =======================
 st.subheader("🗺️ Mapa de países con carreras en los años 50")
@@ -147,8 +159,8 @@ for country, count in country_counts.items():
     if country in country_coords:
         lat, lon = country_coords[country]
         map_data.append({"País": country, "Lat": lat, "Lon": lon, "Carreras": count})
-
 map_df = pd.DataFrame(map_data)
+
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=map_df,
