@@ -257,6 +257,7 @@ import streamlit as st
 
 st.subheader("🧠 Trivia")
 
+# ---------- Preguntas ----------
 trivia_preguntas = [
     {
         "pregunta": "¿Qué piloto ganó más carreras en la década de 1950?",
@@ -275,49 +276,51 @@ trivia_preguntas = [
     }
 ]
 
-# Inicialización del estado
+# ---------- Estado ----------
 if "trivia_index" not in st.session_state:
     st.session_state.trivia_index = 0
+if "trivia_opcion" not in st.session_state:
+    st.session_state.trivia_opcion = None
 if "trivia_respondida" not in st.session_state:
     st.session_state.trivia_respondida = False
 if "trivia_resultado" not in st.session_state:
-    st.session_state.trivia_resultado = None
-if "trivia_opcion" not in st.session_state:
-    st.session_state.trivia_opcion = "Selecciona una opción"
+    st.session_state.trivia_resultado = False
 
-# Mostrar pregunta actual
+# ---------- Funciones ----------
+def comprobar_respuesta():
+    if st.session_state.trivia_opcion == "Selecciona una opción" or st.session_state.trivia_opcion is None:
+        st.warning("Selecciona una opción válida.")
+    else:
+        correcta = trivia_preguntas[st.session_state.trivia_index]["respuesta"]
+        st.session_state.trivia_resultado = st.session_state.trivia_opcion == correcta
+        st.session_state.trivia_respondida = True
+
+def siguiente_pregunta():
+    st.session_state.trivia_index += 1
+    st.session_state.trivia_opcion = None
+    st.session_state.trivia_respondida = False
+    st.session_state.trivia_resultado = False
+
+# ---------- Mostrar Pregunta ----------
 if st.session_state.trivia_index < len(trivia_preguntas):
-    pregunta_actual = trivia_preguntas[st.session_state.trivia_index]
-    opciones = ["Selecciona una opción"] + pregunta_actual["opciones"]
+    q = trivia_preguntas[st.session_state.trivia_index]
+    opciones = ["Selecciona una opción"] + q["opciones"]
 
-    st.markdown(f"**{pregunta_actual['pregunta']}**")
-    opcion_elegida = st.radio(
+    st.markdown(f"**{q['pregunta']}**")
+    st.session_state.trivia_opcion = st.radio(
         "Opciones:",
         opciones,
-        index=opciones.index(st.session_state.trivia_opcion) if st.session_state.trivia_opcion in opciones else 0,
-        key="trivia_radio"
+        index=0,
+        key=f"radio_{st.session_state.trivia_index}"
     )
-    st.session_state.trivia_opcion = opcion_elegida
 
     if not st.session_state.trivia_respondida:
-        if st.button("Comprobar respuesta"):
-            if opcion_elegida == "Selecciona una opción":
-                st.warning("Elige una opción válida.")
-            else:
-                st.session_state.trivia_respondida = True
-                st.session_state.trivia_resultado = (
-                    opcion_elegida == pregunta_actual["respuesta"]
-                )
+        st.button("Comprobar respuesta", on_click=comprobar_respuesta)
     else:
         if st.session_state.trivia_resultado:
             st.success("✅ ¡Correcto!")
         else:
-            st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta_actual['respuesta']}")
-
-        if st.button("Siguiente pregunta"):
-            st.session_state.trivia_index += 1
-            st.session_state.trivia_respondida = False
-            st.session_state.trivia_resultado = None
-            st.session_state.trivia_opcion = "Selecciona una opción"
+            st.error(f"❌ Incorrecto. La respuesta correcta era: {q['respuesta']}")
+        st.button("Siguiente pregunta", on_click=siguiente_pregunta)
 else:
     st.success("🎉 ¡Has terminado todas las preguntas!")
