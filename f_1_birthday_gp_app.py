@@ -37,27 +37,7 @@ st.markdown(
 
 # ======================= TÍTULO PRINCIPAL =======================
 st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
-
-import streamlit as st
-from PIL import Image
-import os
-
-# Nombre del archivo
-file_path = "alfa_romeo_1950.png"
-
-# Solo muestra el uploader si el archivo no existe
-if not os.path.exists(file_path):
-    uploaded_file = st.file_uploader("", type=["png", "jpg", "jpeg"])
-    if uploaded_file:
-        with open(file_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        st.experimental_rerun()  # Recargar la app para que muestre la imagen
-
-# Ahora carga y muestra la imagen directamente
-if os.path.exists(file_path):
-    image = Image.open(file_path)
-    st.image(image, caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
-
+st.image("https://i.imgur.com/tXsjOO5.png", caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
 
 # ======================= ANIMACIÓN DE AUTO (derecha a izquierda) =======================
 import time  # Asegúrate de tener este importado arriba si no lo tienes
