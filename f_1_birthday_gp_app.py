@@ -245,12 +245,13 @@ country_counts = races_df["País"].value_counts()
 top_count = country_counts.max()
 top_countries = country_counts[country_counts == top_count].index.tolist()
 
-# Generar mensaje de acuerdo si hay empate o no
-if len(top_countries) == 1:
-    texto = f"{top_countries[0]} fue el país con más Grandes Premios: {top_count} en total."
-else:
-    lista_paises = " y ".join(top_countries)
-    texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
+    if len(top_countries) == 2:
+        # Si hay solo dos países, usar "e" si el segundo comienza con "I"
+        pais1, pais2 = top_countries
+        conjuncion = "e" if pais2.strip().lower().startswith("i") else "y"
+        lista_paises = f"{pais1} {conjuncion} {pais2}"
+    else:
+        lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
 
 # Capitalizar frase
 texto = texto[0].upper() + texto[1:]
