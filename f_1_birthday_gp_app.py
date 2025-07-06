@@ -4,76 +4,38 @@ import pydeck as pdk
 from datetime import datetime
 import time
 
-# =================== CONFIGURACIÓN DE PÁGINA ===================
-st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁", layout="wide")
-
-# =================== ESTILOS CSS ===================
-st.markdown("""
+# ✅ Pega aquí el bloque de estilos:
+st.markdown(
+    """
     <style>
-    /* Fondo de bandera a cuadros */
+    body {
+        background-color: white;
+    }
+
     .stApp {
-        background: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 0 0 / 40px 40px;
+        background-image: linear-gradient(45deg, #fff 25%, #000 25%, #000 50%, #fff 50%, #fff 75%, #000 75%);
+        background-size: 60px 60px;
+        background-attachment: fixed;
     }
 
-    /* Caja blanca central */
-    .main-container {
+    .block-container {
         background-color: rgba(255, 255, 255, 0.95);
-        padding: 2.5rem 3rem;
-        border-radius: 20px;
-        max-width: 1000px;
-        margin: 2rem auto;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        padding: 3rem;
+        border-radius: 15px;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
     }
 
-    /* Título principal */
-    .titulo-app {
-        font-size: 3.2rem;
-        text-align: center;
-        margin-bottom: 0.8rem;
-    }
-
-    /* Carro animado */
-    @keyframes drive {
-        0% { right: -200px; }
-        100% { right: 100%; }
-    }
-
-    .car-animation {
-        position: relative;
-        height: 120px;
-        overflow: hidden;
-    }
-
-    .car-emoji {
-        position: absolute;
-        right: -200px;
-        top: 25px;
-        font-size: 80px;
-        animation: drive 3s linear forwards;
-        transform: scaleX(-1);
-    }
-
-    .car-static {
-        text-align: center;
-        font-size: 50px;
-        margin-bottom: 2rem;
+    .block-container h1, .block-container h2, .block-container h3,
+    .block-container h4, .block-container h5, .block-container h6,
+    .block-container p, .block-container label, .block-container div {
+        color: black !important;
     }
     </style>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
 
-# =================== ANIMACIÓN DEL CARRO ===================
-car_html = """
-<div class="car-animation">
-    <div class="car-emoji">🏎️💨</div>
-</div>
-"""
-st.markdown(car_html, unsafe_allow_html=True)
-time.sleep(4)
-
-# =================== TÍTULO Y CARRO ESTÁTICO ===================
-st.markdown('<div class="main-container">', unsafe_allow_html=True)
-st.markdown('<div class="titulo-app">La Fórmula de los 50s</div>', unsafe_allow_html=True)
-st.markdown('<div class="car-static">🏎️</div>', unsafe_allow_html=True)
+# Resto de tu código aquí...
 
 
 
