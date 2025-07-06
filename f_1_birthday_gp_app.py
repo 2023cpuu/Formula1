@@ -274,6 +274,7 @@ with tab2:
         victorias_escuderia.index.name = "N°"
         st.dataframe(victorias_escuderia, use_container_width=True)
 
+
 st.subheader("🧠 Trivia")
 
 # ---------- Preguntas ampliadas ----------
