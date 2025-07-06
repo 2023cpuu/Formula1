@@ -155,3 +155,81 @@ st.info(f"""
 Ganó **{first_race['Winner']}** con **{first_race['Team']}**.
 """)
 
+# 🏆 ¿Qué piloto ganó más veces en los años 50?
+
+# Contar victorias por piloto
+winner_counts = races_df["Winner"].value_counts()
+top_driver = winner_counts.idxmax()
+num_wins = winner_counts.max()
+
+# Armar frase con capitalización
+texto = f"{top_driver} fue el piloto con más victorias: {num_wins} en total."
+texto = texto[0].upper() + texto[1:]
+
+# Mostrar resultado
+st.subheader("🏆 Piloto más ganador de los 50s:")
+st.success(texto)
+
+# Opcional: mostrar tabla con los 5 más ganadores
+with st.expander("📊 Ver el top 5 de pilotos más ganadores"):
+    st.table(winner_counts.head(5).reset_index(names=["Piloto", "Victorias"]))
+
+# 🔧 ¿Qué escudería ganó más en los años 50?
+
+# Contar victorias por equipo
+team_counts = races_df["Team"].value_counts()
+top_team = team_counts.idxmax()
+team_wins = team_counts.max()
+
+# Frase con capitalización
+texto = f"{top_team} fue la escudería con más triunfos: {team_wins} en total."
+texto = texto[0].upper() + texto[1:]
+
+# Mostrar resultado
+st.subheader("🔧 Escudería más dominante de los 50s:")
+st.success(texto)
+
+# Opcional: mostrar top 5 de equipos
+with st.expander("📊 Ver el top 5 de escuderías más ganadoras"):
+    st.table(team_counts.head(5).reset_index(names=["Escudería", "Victorias"]))
+
+# 🌍 ¿En qué país hubo más carreras?
+
+# Primero, traducimos cada Grand Prix a país (basado en el mismo gp_translation)
+gp_to_country = {
+    "British": "Reino Unido",
+    "French": "Francia",
+    "Italian": "Italia",
+    "German": "Alemania",
+    "Monaco": "Mónaco",
+    "Belgian": "Bélgica",
+    "Dutch": "Países Bajos",
+    "Swiss": "Suiza",
+    "Argentine": "Argentina",
+    "Indianapolis 500": "Estados Unidos",
+    "Spanish": "España",
+    "Portuguese": "Portugal",
+    "Moroccan": "Marruecos"
+}
+
+# Crear nueva columna con país traducido
+races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
+
+# Contar cuántas carreras hubo en cada país
+country_counts = races_df["País"].value_counts()
+top_country = country_counts.idxmax()
+top_count = country_counts.max()
+
+# Frase capitalizada
+texto = f"{top_country} fue el país con más Grandes Premios: {top_count} en total."
+texto = texto[0].upper() + texto[1:]
+
+# Mostrar resultado
+st.subheader("🌍 País con más carreras en los 50s:")
+st.success(texto)
+
+# Opcional: top 5 países
+with st.expander("📊 Ver el top 5 de países con más carreras"):
+    st.table(country_counts.head(5).reset_index(names=["País", "Cantidad de carreras"]))
+
+
