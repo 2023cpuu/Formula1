@@ -170,9 +170,13 @@ texto = texto[0].upper() + texto[1:]
 st.subheader("🏆 Piloto más ganador de los 50s:")
 st.success(texto)
 
-# Opcional: mostrar tabla con los 5 más ganadores
+# ✅ Mostrar tabla del top 5 (versión compatible con cualquier pandas)
 with st.expander("📊 Ver el top 5 de pilotos más ganadores"):
-    st.table(winner_counts.head(5).reset_index(names=["Piloto", "Victorias"]))
+    st.table(
+        winner_counts.head(5)
+        .reset_index()
+        .rename(columns={"index": "Piloto", "Winner": "Victorias"})
+    )
 
 # 🔧 ¿Qué escudería ganó más en los años 50?
 
