@@ -186,3 +186,40 @@ layer = pdk.Layer(
 )
 view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
 st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "{País}: {Carreras} carreras"}))
+
+st.subheader("🏟️ Pilotos que ganaron varias veces en el mismo circuito")
+
+multi_winners = races_df.groupby(["Winner", "Grand Prix"]).size().reset_index(name="Victorias")
+multi_winners = multi_winners[multi_winners["Victorias"] > 1].sort_values(by="Victorias", ascending=False)
+
+if multi_winners.empty:
+    st.info("Ningún piloto ganó más de una vez en el mismo circuito durante los 50s.")
+else:
+    multi_winners.index += 1
+    multi_winners.columns = ["Piloto", "Grand Prix", "Victorias"]
+    st.table(multi_winners)
+
+st.subheader("🕰️ Primer y último Grand Prix de los años 50")
+
+primer_gp = races_df.loc[races_df["Date_Parsed"].idxmin()]
+ultimo_gp = races_df.loc[races_df["Date_Parsed"].idxmax()]
+
+for label, gp in [("Primer", primer_gp), ("Último", ultimo_gp)]:
+    pais = gp_to_country.get(gp["Grand Prix"], gp["Grand Prix"])
+    fecha = gp["Date_Parsed"]
+    mes_es = month_translation[fecha.strftime("%b")]
+    fecha_str = f"{fecha.day} {mes_es} {fecha.year}"
+    st.write(f"**{label} GP:** El GP de {pais} el {fecha_str}, ganado por {gp['Winner']} con {gp['Team']}.")
+
+st.subheader("🔄 Pilotos que corrieron para más de una escudería")
+
+pilotos_por_escuderia = races_df.groupby("Winner")["Team"].nunique()
+pilotos_multiteam = pilotos_por_escuderia[pilotos_por_escuderia > 1].sort_values(ascending=False)
+
+if pilotos_multiteam.empty:
+    st.info("Todos los pilotos compitieron con una sola escudería.")
+else:
+    pilotos_multiteam = pilotos_multiteam.reset_index()
+    pilotos_multiteam.index += 1
+    pilotos_multiteam.columns = ["Piloto", "Escuderías distintas"]
+    st.table(pilotos_multiteam)
