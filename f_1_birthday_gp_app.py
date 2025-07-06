@@ -275,49 +275,49 @@ trivia_preguntas = [
     }
 ]
 
-# Inicialización de estado
-if "trivia_idx" not in st.session_state:
-    st.session_state.trivia_idx = 0
-if "mostrar_resultado" not in st.session_state:
-    st.session_state.mostrar_resultado = False
-if "respuesta_usuario" not in st.session_state:
-    st.session_state.respuesta_usuario = None
-if "es_correcta" not in st.session_state:
-    st.session_state.es_correcta = False
+# Inicialización del estado
+if "trivia_index" not in st.session_state:
+    st.session_state.trivia_index = 0
+if "trivia_respondida" not in st.session_state:
+    st.session_state.trivia_respondida = False
+if "trivia_resultado" not in st.session_state:
+    st.session_state.trivia_resultado = None
+if "trivia_opcion" not in st.session_state:
+    st.session_state.trivia_opcion = "Selecciona una opción"
 
-idx = st.session_state.trivia_idx
+# Mostrar pregunta actual
+if st.session_state.trivia_index < len(trivia_preguntas):
+    pregunta_actual = trivia_preguntas[st.session_state.trivia_index]
+    opciones = ["Selecciona una opción"] + pregunta_actual["opciones"]
 
-if idx < len(trivia_preguntas):
-    pregunta = trivia_preguntas[idx]
-
-    st.markdown(f"**{pregunta['pregunta']}**")
-
-    respuesta = st.radio(
-        "Elige una opción:",
-        options=pregunta["opciones"],
-        key=f"pregunta_{idx}"
+    st.markdown(f"**{pregunta_actual['pregunta']}**")
+    opcion_elegida = st.radio(
+        "Opciones:",
+        opciones,
+        index=opciones.index(st.session_state.trivia_opcion) if st.session_state.trivia_opcion in opciones else 0,
+        key="trivia_radio"
     )
+    st.session_state.trivia_opcion = opcion_elegida
 
-    # Guardar la respuesta solo si cambia
-    st.session_state.respuesta_usuario = respuesta
-
-    if not st.session_state.mostrar_resultado:
+    if not st.session_state.trivia_respondida:
         if st.button("Comprobar respuesta"):
-            if st.session_state.respuesta_usuario:
-                st.session_state.es_correcta = st.session_state.respuesta_usuario == pregunta["respuesta"]
-                st.session_state.mostrar_resultado = True
+            if opcion_elegida == "Selecciona una opción":
+                st.warning("Elige una opción válida.")
+            else:
+                st.session_state.trivia_respondida = True
+                st.session_state.trivia_resultado = (
+                    opcion_elegida == pregunta_actual["respuesta"]
+                )
     else:
-        if st.session_state.es_correcta:
+        if st.session_state.trivia_resultado:
             st.success("✅ ¡Correcto!")
         else:
-            st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta['respuesta']}")
+            st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta_actual['respuesta']}")
 
         if st.button("Siguiente pregunta"):
-            st.session_state.trivia_idx += 1
-            st.session_state.mostrar_resultado = False
-            st.session_state.respuesta_usuario = None
-            st.session_state.es_correcta = False
-
+            st.session_state.trivia_index += 1
+            st.session_state.trivia_respondida = False
+            st.session_state.trivia_resultado = None
+            st.session_state.trivia_opcion = "Selecciona una opción"
 else:
-    st.success("🎉 ¡Has completado la trivia!")
-
+    st.success("🎉 ¡Has terminado todas las preguntas!")
