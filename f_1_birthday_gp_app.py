@@ -6,7 +6,10 @@ import time
 import random
 
 # Configurar página
-st.set_page_config(st.title("🏁 La Fórmula de los 50s"), page_icon="🏁")
+# Configurar página (título de pestaña)
+st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
+# Título visible dentro de la app
+st.title("🏁 La Fórmula de los 50s")
 st.markdown(
     """
     <style>
