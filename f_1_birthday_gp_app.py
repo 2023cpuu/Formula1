@@ -1,102 +1,61 @@
 import streamlit as st
 import time
 
-# Configurar la página con fondo blanco
+# Configurar página
 st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
 
-# Asegurar fondo blanco
+# Fondo a cuadros blanco y negro
 st.markdown("""
-<style>
-body {
-    background-color: white !important;
-}
-</style>
+    <style>
+        body {
+            background-image: repeating-linear-gradient(
+                45deg,
+                #ffffff 0,
+                #ffffff 20px,
+                #000000 20px,
+                #000000 40px
+            );
+            background-size: 40px 40px;
+        }
+        /* Para el contenido principal */
+        .stApp {
+            background-color: rgba(255,255,255,0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 1rem;
+        }
+    </style>
 """, unsafe_allow_html=True)
 
-# Animación de carrito: entra y sale
+# ANIMACIÓN del carrito (una sola vez)
 car_animation = """
-<div style="position:relative; height:160px; overflow:hidden;">
+<div style="position:relative; height:120px; overflow:hidden;">
     <div style="
         position:absolute;
-        right:-500px;
+        left:-200px;
         top:20px;
         animation: drive 3s linear forwards;
-        font-size: 120px;">
+        font-size: 100px;">
         🏎️💨
-    </div>
-</div>
-
-<div style="position:relative; height:160px; overflow:hidden;">
-    <div style="
-        position:absolute;
-        left:-500px;
-        top:20px;
-        animation: drive_back 3s 3s linear forwards;
-        font-size: 120px;">
-        💨🏎️
     </div>
 </div>
 
 <style>
 @keyframes drive {
-    0% { right: -500px; }
-    100% { right: 100%; }
-}
-@keyframes drive_back {
-    0% { left: -500px; }
+    0% { left: -200px; }
     100% { left: 100%; }
 }
 </style>
 """
 st.markdown(car_animation, unsafe_allow_html=True)
-time.sleep(6.2)  # Esperar que termine la animación
+time.sleep(3.2)
 
-# Título con carrito estático debajo
+# TÍTULO con carrito decorativo
 st.markdown("""
-<h1 style='text-align: center; font-size: 3em; margin-bottom: 0;'>La Fórmula de los 50s</h1>
-<div style='text-align:center; font-size:110px; margin-top:-10px;'>🏎️</div>
+<h1 style='text-align: center; font-size: 3em; margin-bottom: 0.3em; color: black;'>La Fórmula de los 50s</h1>
+<div style='text-align:center; font-size:100px; margin-top:-10px;'>🏎️</div>
 """, unsafe_allow_html=True)
 
-
-
-# 🎨 Fondo tipo bandera a cuadros
-st.markdown("""
-    <style>
-    .stApp {
-        background-image: repeating-conic-gradient(#000 0% 25%, white 0% 50%);
-        background-size: 60px 60px;
-    }
-    .main-container {
-        background-color: rgba(255, 255, 255, 0.9);
-        padding: 2rem;
-        border-radius: 15px;
-        max-width: 1000px;
-        margin: auto;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# Animación de auto
-st.markdown("""
-<div style="position:relative; height:160px; overflow:hidden;">
-    <div style="
-        position:absolute;
-        right:-500px;
-        top:20px;
-        animation: drive 3s linear forwards;
-        font-size: 120px;">
-        🏎️💨
-    </div>
-</div>
-<style>
-@keyframes drive {
-    0% { right: -500px; }
-    100% { right: 100%; }
-}
-</style>
-""", unsafe_allow_html=True)
-time.sleep(4.2)
-st.markdown('<div class="contenedor-central">', unsafe_allow_html=True)
 
 
 with st.container():
