@@ -247,20 +247,72 @@ if not repetidos.empty:
 else:
     st.info("Ningún piloto ganó más de una vez en el mismo circuito.")
 
+import random
+
 # TRIVIA
 st.subheader("🧠 Trivia")
 
-pregunta = "¿Cuál fue el primer país fuera de Europa en albergar un Grand Prix en los años 50?"
-opciones = ["Argentina", "Estados Unidos", "Marruecos", "India"]
-respuesta_correcta = "Argentina"
+# Preguntas disponibles
+preguntas_trivia = [
+    {
+        "pregunta": "¿Cuál fue el primer país fuera de Europa en albergar un Grand Prix en los años 50?",
+        "opciones": ["Argentina", "Estados Unidos", "Marruecos", "India"],
+        "respuesta": "Argentina",
+        "explicacion": "Argentina fue sede del GP en 1953, siendo el primer país no europeo en hacerlo."
+    },
+    {
+        "pregunta": "¿Qué piloto ganó más Grandes Premios durante los años 50?",
+        "opciones": ["Stirling Moss", "Alberto Ascari", "Juan Manuel Fangio", "Luigi Musso"],
+        "respuesta": "Juan Manuel Fangio",
+        "explicacion": "Fangio ganó 24 carreras y 5 campeonatos mundiales en esa década."
+    },
+    {
+        "pregunta": "¿Qué circuito europeo fue sede del GP de Mónaco?",
+        "opciones": ["Silverstone", "Spa-Francorchamps", "Monaco", "Zandvoort"],
+        "respuesta": "Monaco",
+        "explicacion": "El GP de Mónaco siempre se ha celebrado en el Circuit de Monaco, en Monte Carlo."
+    },
+    {
+        "pregunta": "¿Qué escudería dominó con más victorias en los años 50?",
+        "opciones": ["Ferrari", "Mercedes", "Maserati", "Alfa Romeo"],
+        "respuesta": "Ferrari",
+        "explicacion": "Ferrari obtuvo la mayor cantidad de victorias en la década de los 50."
+    }
+]
 
-with st.form(key="trivia_form"):
-    respuesta_usuario = st.radio("¿Cuál fue el primer país fuera de Europa en albergar un GP en los años 50?", opciones)
-    submit = st.form_submit_button("Comprobar respuesta")
+# Estado del puntaje
+if "puntos" not in st.session_state:
+    st.session_state.puntos = 0
+if "respondidas" not in st.session_state:
+    st.session_state.respondidas = 0
 
-if submit:
-    if respuesta_usuario == respuesta_correcta:
-        st.success("🎉 ¡Correcto! Argentina fue el primer país fuera de Europa en tener un GP: en 1953.")
-    else:
-        st.error(f"❌ Incorrecto. La respuesta correcta es: {respuesta_correcta}.")
+# Elegir una pregunta aleatoria que no haya sido respondida
+preguntas_disponibles = [p for p in preguntas_trivia if p["pregunta"] not in st.session_state]
+if preguntas_disponibles:
+    pregunta_actual = random.choice(preguntas_disponibles)
+    st.session_state[pregunta_actual["pregunta"]] = True  # Marcarla como usada
 
+    st.markdown(f"""
+    <div style='font-size:20px; font-weight: bold; margin-bottom:10px;'>
+        {pregunta_actual["pregunta"]}
+    </div>
+    """, unsafe_allow_html=True)
+
+    with st.form(key="form_trivia"):
+        respuesta_usuario = st.radio("Elige una opción:", pregunta_actual["opciones"])
+        submit = st.form_submit_button("Comprobar respuesta")
+
+    if submit:
+        st.session_state.respondidas += 1
+        if respuesta_usuario == pregunta_actual["respuesta"]:
+            st.session_state.puntos += 1
+            st.success("✅ ¡Correcto!")
+        else:
+            st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta_actual['respuesta']}")
+        st.info(f"🧠 {pregunta_actual['explicacion']}")
+
+        st.markdown("---")
+        st.markdown(f"**Puntaje actual:** {st.session_state.puntos} de {st.session_state.respondidas}")
+else:
+    st.success("🎉 ¡Has respondido todas las preguntas de trivia!")
+    st.markdown(f"**Puntaje final:** {st.session_state.puntos} de {st.session_state.respondidas}")
