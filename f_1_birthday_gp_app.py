@@ -193,9 +193,13 @@ texto = texto[0].upper() + texto[1:]
 st.subheader("🔧 Escudería más dominante de los 50s:")
 st.success(texto)
 
-# Opcional: mostrar top 5 de equipos
+# ✅ Mostrar tabla del top 5 (versión compatible)
 with st.expander("📊 Ver el top 5 de escuderías más ganadoras"):
-    st.table(team_counts.head(5).reset_index(names=["Escudería", "Victorias"]))
+    st.table(
+        team_counts.head(5)
+        .reset_index()
+        .rename(columns={"index": "Escudería", "Team": "Victorias"})
+    )
 
 # 🌍 ¿En qué país hubo más carreras?
 
