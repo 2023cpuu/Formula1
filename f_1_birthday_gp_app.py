@@ -40,21 +40,23 @@ st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsaf
 
 # ======================= ANIMACIÓN DE AUTO (derecha a izquierda) =======================
 car_animation = """
+car_animation = """
 <div style="position:relative; height:160px; overflow:hidden;">
     <div style="
         position:absolute;
-        left:-500px;
+        right:-500px;
         top:20px;
         animation: drive 3s linear forwards;
-        font-size: 120px;">
+        font-size: 120px;
+        transform: scaleX(-1);">
         🏎️💨
     </div>
 </div>
 
 <style>
 @keyframes drive {
-    0% { left: -500px; }
-    100% { left: 100%; }
+    0% { right: -500px; }
+    100% { right: 100%; }
 }
 </style>
 """
