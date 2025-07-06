@@ -80,6 +80,7 @@ races_df["Birthday_Diff"] = races_df["Date_Parsed"].dt.strftime("%d-%m")\
 
 closest_race = races_df.sort_values("Birthday_Diff").iloc[0]
 
+gp_name = gp_translation.get(closest_race["Grand Prix"], f"el GP de {closest_race['Grand Prix']}")
 st.subheader("🏁 Carrera más cercana a tu cumpleaños:")
 st.info(f"""
 El **{closest_race['Grand Prix']}** en {closest_race['Date']} fue la carrera más cercana a tu cumple.
