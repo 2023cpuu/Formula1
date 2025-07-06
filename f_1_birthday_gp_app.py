@@ -242,33 +242,38 @@ st.pydeck_chart(pdk.Deck(
     tooltip={"text": "{País}: {Carreras} carreras"}
 ))
 
-st.subheader("🔍 Explora pilotos y escuderías")
+st.subheader("🔍 Explora resultados por piloto o escudería")
 
-# Obtener listas únicas
-pilotos_unicos = sorted(races_df["Winner"].dropna().unique())
-escuderias_unicas = sorted(races_df["Team"].dropna().unique())
+st.markdown("Selecciona **uno** de los siguientes desglosables para explorar resultados específicos:")
 
-col1, col2 = st.columns(2)
+tab1, tab2 = st.tabs(["🏎️ Por piloto", "🔧 Por escudería"])
 
-# Selectbox para piloto
-piloto_seleccionado = col1.selectbox("Selecciona un piloto", ["--"] + pilotos_unicos)
+# ==== Por piloto ====
+with tab1:
+    pilotos_unicos = sorted(races_df["Winner"].dropna().unique())
+    piloto = st.selectbox("Selecciona un piloto", ["--"] + pilotos_unicos)
 
-if piloto_seleccionado != "--":
-    st.markdown(f"### Resultados de {piloto_seleccionado}")
-    st.dataframe(
-        races_df[races_df["Winner"] == piloto_seleccionado][["Year", "Grand Prix", "Date", "Team"]],
-        use_container_width=True
-    )
+    if piloto != "--":
+        st.markdown(f"### Resultados de {piloto}")
+        resultados = races_df[races_df["Winner"] == piloto][["Year", "Grand Prix", "Date", "Team"]].sort_values("Year")
+        resultados.reset_index(drop=True, inplace=True)
+        resultados.index += 1
+        resultados.index.name = "N°"
+        st.dataframe(resultados, use_container_width=True)
 
-# Selectbox para escudería
-escuderia_seleccionada = col2.selectbox("Selecciona una escudería", ["--"] + escuderias_unicas)
+# ==== Por escudería ====
+with tab2:
+    escuderias_unicas = sorted(races_df["Team"].dropna().unique())
+    escuderia = st.selectbox("Selecciona una escudería", ["--"] + escuderias_unicas)
 
-if escuderia_seleccionada != "--":
-    st.markdown(f"### Resultados de {escuderia_seleccionada}")
-    st.dataframe(
-        races_df[races_df["Team"] == escuderia_seleccionada][["Year", "Grand Prix", "Date", "Winner"]],
-        use_container_width=True
-    )
+    if escuderia != "--":
+        st.markdown(f"### Resultados de {escuderia}")
+        resultados = races_df[races_df["Team"] == escuderia][["Year", "Grand Prix", "Date", "Winner"]].sort_values("Year")
+        resultados.reset_index(drop=True, inplace=True)
+        resultados.index += 1
+        resultados.index.name = "N°"
+        st.dataframe(resultados, use_container_width=True)
+
 
 
 
