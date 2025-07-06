@@ -237,10 +237,10 @@ else:
 
 import random
 
-# TRIVIA
+# ===================== TRIVIA =====================
 st.subheader("🧠 Trivia")
 
-# Preguntas disponibles
+# Lista de preguntas de trivia
 preguntas_trivia = [
     {
         "pregunta": "¿Cuál fue el primer país fuera de Europa en albergar un Grand Prix en los años 50?",
@@ -255,52 +255,69 @@ preguntas_trivia = [
         "explicacion": "Fangio ganó 24 carreras y 5 campeonatos mundiales en esa década."
     },
     {
-        "pregunta": "¿Qué circuito europeo fue sede del GP de Mónaco?",
+        "pregunta": "¿Qué escudería obtuvo más victorias en los años 50?",
+        "opciones": ["Ferrari", "Mercedes", "Maserati", "Alfa Romeo"],
+        "respuesta": "Ferrari",
+        "explicacion": "Ferrari fue la escudería con más victorias en la década de los 50."
+    },
+    {
+        "pregunta": "¿Dónde se disputó el famoso GP de Mónaco?",
         "opciones": ["Silverstone", "Spa-Francorchamps", "Monaco", "Zandvoort"],
         "respuesta": "Monaco",
         "explicacion": "El GP de Mónaco siempre se ha celebrado en el Circuit de Monaco, en Monte Carlo."
-    },
-    {
-        "pregunta": "¿Qué escudería dominó con más victorias en los años 50?",
-        "opciones": ["Ferrari", "Mercedes", "Maserati", "Alfa Romeo"],
-        "respuesta": "Ferrari",
-        "explicacion": "Ferrari obtuvo la mayor cantidad de victorias en la década de los 50."
     }
 ]
 
-# Estado del puntaje
-if "puntos" not in st.session_state:
-    st.session_state.puntos = 0
-if "respondidas" not in st.session_state:
-    st.session_state.respondidas = 0
+# Inicializar estados
+if "trivia_respondidas" not in st.session_state:
+    st.session_state.trivia_respondidas = []
+if "trivia_puntos" not in st.session_state:
+    st.session_state.trivia_puntos = 0
+if "trivia_actual" not in st.session_state:
+    preguntas_disponibles = [p for p in preguntas_trivia if p["pregunta"] not in st.session_state.trivia_respondidas]
+    if preguntas_disponibles:
+        st.session_state.trivia_actual = random.choice(preguntas_disponibles)
+    else:
+        st.session_state.trivia_actual = None
+if "trivia_mostrada" not in st.session_state:
+    st.session_state.trivia_mostrada = False
 
-# Elegir una pregunta aleatoria que no haya sido respondida
-preguntas_disponibles = [p for p in preguntas_trivia if p["pregunta"] not in st.session_state]
-if preguntas_disponibles:
-    pregunta_actual = random.choice(preguntas_disponibles)
-    st.session_state[pregunta_actual["pregunta"]] = True  # Marcarla como usada
-
+# Mostrar pregunta actual
+pregunta = st.session_state.trivia_actual
+if pregunta:
     st.markdown(f"""
     <div style='font-size:20px; font-weight: bold; margin-bottom:10px;'>
-        {pregunta_actual["pregunta"]}
+        {pregunta['pregunta']}
     </div>
     """, unsafe_allow_html=True)
 
-    with st.form(key="form_trivia"):
-        respuesta_usuario = st.radio("Elige una opción:", pregunta_actual["opciones"])
+    with st.form("trivia_form"):
+        respuesta_usuario = st.radio("Elige una opción:", pregunta["opciones"])
         submit = st.form_submit_button("Comprobar respuesta")
 
-    if submit:
-        st.session_state.respondidas += 1
-        if respuesta_usuario == pregunta_actual["respuesta"]:
-            st.session_state.puntos += 1
+    if submit and not st.session_state.trivia_mostrada:
+        st.session_state.trivia_mostrada = True
+        st.session_state.trivia_respondidas.append(pregunta["pregunta"])
+        if respuesta_usuario == pregunta["respuesta"]:
             st.success("✅ ¡Correcto!")
+            st.session_state.trivia_puntos += 1
         else:
-            st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta_actual['respuesta']}")
-        st.info(f"🧠 {pregunta_actual['explicacion']}")
+            st.error(f"❌ Incorrecto. La respuesta correcta era: {pregunta['respuesta']}")
+        st.info(f"🧠 {pregunta['explicacion']}")
 
         st.markdown("---")
-        st.markdown(f"**Puntaje actual:** {st.session_state.puntos} de {st.session_state.respondidas}")
+        st.markdown(f"**Puntaje actual:** {st.session_state.trivia_puntos} de {len(st.session_state.trivia_respondidas)}")
+
+        # Botón para pasar a la siguiente
+        if st.button("Siguiente pregunta"):
+            preguntas_restantes = [p for p in preguntas_trivia if p["pregunta"] not in st.session_state.trivia_respondidas]
+            if preguntas_restantes:
+                st.session_state.trivia_actual = random.choice(preguntas_restantes)
+                st.session_state.trivia_mostrada = False
+                st.rerun()
+            else:
+                st.success("🎉 ¡Has respondido todas las preguntas de trivia!")
 else:
     st.success("🎉 ¡Has respondido todas las preguntas de trivia!")
-    st.markdown(f"**Puntaje final:** {st.session_state.puntos} de {st.session_state.respondidas}")
+    st.markdown(f"**Puntaje final:** {st.session_state.trivia_puntos} de {len(preguntas_trivia)}")
+
