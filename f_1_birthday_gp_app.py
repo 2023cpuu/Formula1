@@ -1,82 +1,76 @@
 import streamlit as st
+import pandas as pd
+import pydeck as pdk
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import time
+import random
 
-# Configurar la página
+# Configuración de la página
 st.set_page_config(page_title="La Fórmula de los 50s", page_icon="🏁")
 
-# Fondo tipo bandera de cuadros (solo fondo, sin afectar texto)
+# Estilo: fondo de bandera a cuadros y contenedor blanco para todo
 st.markdown("""
     <style>
-    html, body, .stApp {
-        background-image: 
-            linear-gradient(45deg, #000 25%, transparent 25%),
-            linear-gradient(-45deg, #000 25%, transparent 25%),
-            linear-gradient(45deg, transparent 75%, #000 75%),
-            linear-gradient(-45deg, transparent 75%, #000 75%);
+    body {
+        background-image: linear-gradient(45deg, black 25%, white 25%, white 50%, black 50%, black 75%, white 75%);
         background-size: 40px 40px;
-        background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
-        background-color: white;
     }
-
-    .main-content {
-        background-color: rgba(255,255,255,0.9);
+    .main-container {
+        background-color: rgba(255,255,255,0.92);
         padding: 2rem;
-        border-radius: 15px;
-    }
-
-    /* Evitar que el emoji cruce encima del título */
-    .car-animation {
-        position:relative;
-        height:130px;
-        overflow:hidden;
-        z-index:1;
-    }
-
-    @keyframes drive {
-        0% { left: -200px; }
-        100% { left: 100%; }
-    }
-
-    .car {
-        position:absolute;
-        left:-200px;
-        top:30px;
-        animation: drive 3s linear forwards;
-        font-size: 100px;
-    }
-
-    .titulo {
-        text-align: center;
-        font-size: 3em;
-        margin-bottom: 0.2em;
-        color: black;
-        z-index: 2;
-    }
-
-    .car-static {
-        text-align: center;
-        font-size: 80px;
-        margin-top: -10px;
+        border-radius: 20px;
+        box-shadow: 0px 4px 20px rgba(0,0,0,0.3);
+        margin-top: 20px;
+        margin-bottom: 40px;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# ANIMACIÓN del carrito
+# Animación del carrito (va de derecha a izquierda)
+car_animation = """
+<div style="position:relative; height:120px; overflow:hidden;">
+    <div style="
+        position:absolute;
+        right:-200px;
+        top:30px;
+        animation: drive 3s linear forwards;
+        font-size: 80px;
+        transform: scaleX(-1);">
+        🏎️💨
+    </div>
+</div>
+<style>
+@keyframes drive {
+    0% { right: -200px; }
+    100% { right: 100%; }
+}
+</style>
+"""
+st.markdown(car_animation, unsafe_allow_html=True)
+time.sleep(4)
+
+# Imagen estática del carrito bajo el título
 st.markdown("""
-<div class="car-animation">
-    <div class="car">🏎️💨</div>
+<div style="text-align:center; font-size:40px; margin-bottom: -10px;">
+    🏎️
 </div>
 """, unsafe_allow_html=True)
-time.sleep(3.2)
 
-# CONTENIDO PRINCIPAL con fondo blanco translúcido
+# Contenedor principal con fondo blanco
 with st.container():
-    st.markdown("""
-    <div class="main-content">
-        <div class="titulo">La Fórmula de los 50s</div>
-        <div class="car-static">🏎️</div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="main-container">', unsafe_allow_html=True)
+    st.title("La Fórmula de los 50s")
+
+    # 👇👇 A partir de aquí va TODO el resto del contenido 👇👇
+    # (Pega el resto de tu app desde aquí adentro)
+    # Por ejemplo:
+    st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
+    # etc...
+
+    # 👆👆 Hasta aquí pega TODO el contenido que ya tienes (preguntas, gráficos, etc.) 👆👆
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 with st.container():
