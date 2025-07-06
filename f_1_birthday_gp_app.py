@@ -7,6 +7,29 @@ import random
 
 # Configurar página
 st.set_page_config(page_title="GPs de los años 50", page_icon="🏁")
+st.markdown("""
+    <style>
+    .stApp {
+        background-image: repeating-conic-gradient(#000 0% 25%, white 0% 50%);
+        background-size: 80px 80px;
+        color: #000;
+    }
+    .contenedor-blanco {
+        background-color: rgba(255, 255, 255, 0.94);
+        padding: 3rem;
+        border-radius: 15px;
+        max-width: 1000px;
+        margin: auto;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+    }
+    .contenedor-blanco h1, .contenedor-blanco h2, .contenedor-blanco h3,
+    .contenedor-blanco h4, .contenedor-blanco h5, .contenedor-blanco h6,
+    .contenedor-blanco p {
+        color: #111 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 
 # 🎨 Fondo tipo bandera a cuadros
 st.markdown("""
@@ -45,6 +68,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 time.sleep(4.2)
+st.markdown('<div class="contenedor-blanco">', unsafe_allow_html=True)
+
 
 with st.container():
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
@@ -256,5 +281,6 @@ with st.container():
     else:
         st.info("¡Has completado la trivia!")
 
-    st.markdown('</div>', unsafe_allow_html=True)
+  st.markdown("</div>", unsafe_allow_html=True)
+
 
