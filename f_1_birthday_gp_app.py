@@ -242,40 +242,37 @@ st.pydeck_chart(pdk.Deck(
     tooltip={"text": "{País}: {Carreras} carreras"}
 ))
 
-st.subheader("🔍 Explora resultados por piloto o escudería")
+st.subheader("🔍 Explora desempeño de pilotos y escuderías")
 
-st.markdown("Selecciona **uno** de los siguientes desglosables para explorar resultados específicos:")
+st.markdown("Selecciona **una sola opción** para ver el historial de victorias de un piloto o una escudería:")
 
-tab1, tab2 = st.tabs(["🏎️ Por piloto", "🔧 Por escudería"])
+tab1, tab2 = st.tabs(["🏎️ Ver por piloto", "🔧 Ver por escudería"])
 
 # ==== Por piloto ====
 with tab1:
     pilotos_unicos = sorted(races_df["Winner"].dropna().unique())
-    piloto = st.selectbox("Selecciona un piloto", ["--"] + pilotos_unicos)
+    piloto = st.selectbox("Selecciona un piloto ganador", ["--"] + pilotos_unicos)
 
     if piloto != "--":
-        st.markdown(f"### Resultados de {piloto}")
-        resultados = races_df[races_df["Winner"] == piloto][["Year", "Grand Prix", "Date", "Team"]].sort_values("Year")
-        resultados.reset_index(drop=True, inplace=True)
-        resultados.index += 1
-        resultados.index.name = "N°"
-        st.dataframe(resultados, use_container_width=True)
+        st.markdown(f"### 🏁 Victorias de **{piloto}** en los años 50")
+        victorias_piloto = races_df[races_df["Winner"] == piloto][["Year", "Grand Prix", "Date", "Team"]].sort_values("Year")
+        victorias_piloto.reset_index(drop=True, inplace=True)
+        victorias_piloto.index += 1
+        victorias_piloto.index.name = "N°"
+        st.dataframe(victorias_piloto, use_container_width=True)
 
 # ==== Por escudería ====
 with tab2:
     escuderias_unicas = sorted(races_df["Team"].dropna().unique())
-    escuderia = st.selectbox("Selecciona una escudería", ["--"] + escuderias_unicas)
+    escuderia = st.selectbox("Selecciona una escudería ganadora", ["--"] + escuderias_unicas)
 
     if escuderia != "--":
-        st.markdown(f"### Resultados de {escuderia}")
-        resultados = races_df[races_df["Team"] == escuderia][["Year", "Grand Prix", "Date", "Winner"]].sort_values("Year")
-        resultados.reset_index(drop=True, inplace=True)
-        resultados.index += 1
-        resultados.index.name = "N°"
-        st.dataframe(resultados, use_container_width=True)
-
-
-
+        st.markdown(f"### 🏆 Victorias de **{escuderia}** en los años 50")
+        victorias_escuderia = races_df[races_df["Team"] == escuderia][["Year", "Grand Prix", "Date", "Winner"]].sort_values("Year")
+        victorias_escuderia.reset_index(drop=True, inplace=True)
+        victorias_escuderia.index += 1
+        victorias_escuderia.index.name = "N°"
+        st.dataframe(victorias_escuderia, use_container_width=True)
 
 st.subheader("🧠 Trivia")
 
