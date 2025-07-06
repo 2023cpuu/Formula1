@@ -250,41 +250,61 @@ with st.container():
     view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
     st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "{País}: {Carreras} carreras}" if map_mode == "Por país" else "{Circuito}: {Carreras} carreras"}))
 
-    # 📚 Trivia
-    st.subheader("❓ Trivia")
-    if "trivia_idx" not in st.session_state:
-        st.session_state.trivia_idx = 0
+# ======================= TRIVIA =======================
+st.subheader("🧠 Trivia")
 
-    preguntas = [
-        {
-            "pregunta": "¿Quién fue el piloto con más títulos en los 50s?",
-            "opciones": ["Alberto Ascari", "Juan Manuel Fangio", "Stirling Moss"],
-            "respuesta": "Juan Manuel Fangio"
-        },
-        {
-            "pregunta": "¿En qué país se realizó el GP de Mónaco?",
-            "opciones": ["Francia", "Mónaco", "Italia"],
-            "respuesta": "Mónaco"
-        },
-        {
-            "pregunta": "¿Cuál fue el único GP estadounidense en los 50s?",
-            "opciones": ["Watkins Glen", "Daytona", "Indianapolis 500"],
-            "respuesta": "Indianapolis 500"
-        }
-    ]
+trivia_preguntas = [
+    {
+        "pregunta": "¿Qué piloto ganó más carreras en la década de 1950?",
+        "opciones": ["Juan Manuel Fangio", "Alberto Ascari", "Stirling Moss", "Mike Hawthorn"],
+        "respuesta": "Juan Manuel Fangio"
+    },
+    {
+        "pregunta": "¿En qué circuito se corrió el primer GP de la historia moderna en 1950?",
+        "opciones": ["Monza", "Silverstone", "Indianápolis", "Zandvoort"],
+        "respuesta": "Silverstone"
+    },
+    {
+        "pregunta": "¿Qué país sudamericano albergó Grandes Premios en los años 50?",
+        "opciones": ["Brasil", "Argentina", "Chile", "Perú"],
+        "respuesta": "Argentina"
+    },
+    {
+        "pregunta": "¿Cuál de estas escuderías tuvo más victorias en los años 50?",
+        "opciones": ["Maserati", "Ferrari", "Mercedes", "Alfa Romeo"],
+        "respuesta": "Ferrari"
+    },
+    {
+        "pregunta": "¿Qué piloto ganó el campeonato de 1958, el primero con sistema de puntuación moderna?",
+        "opciones": ["Stirling Moss", "Mike Hawthorn", "Luigi Musso", "Tony Brooks"],
+        "respuesta": "Mike Hawthorn"
+    }
+]
 
-    idx = st.session_state.trivia_idx
-    if idx < len(preguntas):
-        q = preguntas[idx]
-        st.markdown(f"### {q['pregunta']}")
-        opcion = st.radio("Elige una opción:", q["opciones"], key=f"trivia_{idx}")
-        if st.button("Comprobar respuesta", key=f"check_{idx}"):
-            if opcion == q["respuesta"]:
-                st.success("¡Correcto!")
+# Inicializar estado si es necesario
+if "pregunta_idx" not in st.session_state:
+    st.session_state.pregunta_idx = 0
+    st.session_state.mostrar_respuesta = False
+
+# Obtener pregunta actual
+idx = st.session_state.pregunta_idx
+
+if idx < len(trivia_preguntas):
+    pregunta_actual = trivia_preguntas[idx]
+    st.markdown(f"**{pregunta_actual['pregunta']}**")
+    respuesta_usuario = st.radio("Elige una opción:", pregunta_actual["opciones"], key=f"pregunta_{idx}")
+
+    if not st.session_state.mostrar_respuesta:
+        if st.button("Comprobar respuesta"):
+            st.session_state.mostrar_respuesta = True
+            correcta = pregunta_actual["respuesta"]
+            if respuesta_usuario == correcta:
+                st.success("✅ ¡Correcto!")
             else:
-                st.error(f"Incorrecto. La respuesta era: {q['respuesta']}")
-            st.session_state.trivia_idx += 1
+                st.error(f"❌ Incorrecto. La respuesta correcta era: {correcta}")
     else:
-        st.info("¡Has completado la trivia!")
-
-st.markdown("</div>", unsafe_allow_html=True)
+        if st.button("Siguiente pregunta"):
+            st.session_state.pregunta_idx += 1
+            st.session_state.mostrar_respuesta = False
+else:
+    st.info("🎉 ¡Has terminado la trivia!")
