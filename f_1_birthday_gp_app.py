@@ -154,22 +154,39 @@ with st.container():
             gp_name = gp_to_country.get(closest["Grand Prix"], closest["Grand Prix"])
             mensaje = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest['Winner']} con {closest['Team']}."
             st.info(mensaje[0].upper() + mensaje[1:])
-    # 🏆 Piloto con más victorias
+    
+import altair as alt
+
 st.subheader("🏆 Piloto con más victorias en los 50s")
+
 top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
 top5_winners.columns = ["Piloto", "Victorias"]
 top5_winners.index += 1
 
-st.bar_chart(top5_winners.set_index("Piloto"))
+chart_winners = alt.Chart(top5_winners).mark_bar(color='crimson').encode(
+    x=alt.X("Victorias:Q", axis=alt.Axis(title="Victorias", format="d")),
+    y=alt.Y("Piloto:N", sort='-x', title=""),
+    tooltip=["Piloto", "Victorias"]
+).properties(width=600, height=250)
+
+st.altair_chart(chart_winners, use_container_width=True)
 
 
     # 🔧 Escudería más dominante
 st.subheader("🔧 Escudería más dominante de los 50s")
+
 top5_teams = races_df["Team"].value_counts().head(5).reset_index()
 top5_teams.columns = ["Escudería", "Victorias"]
 top5_teams.index += 1
 
-st.bar_chart(top5_teams.set_index("Escudería"))
+chart_teams = alt.Chart(top5_teams).mark_bar(color='steelblue').encode(
+    x=alt.X("Victorias:Q", axis=alt.Axis(title="Victorias", format="d")),
+    y=alt.Y("Escudería:N", sort='-x', title=""),
+    tooltip=["Escudería", "Victorias"]
+).properties(width=600, height=250)
+
+st.altair_chart(chart_teams, use_container_width=True)
+
 
 
     # 🌍 País con más carreras
