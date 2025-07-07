@@ -197,14 +197,15 @@ top_countries = country_counts[country_counts == top_count].index.tolist()
 
 if len(top_countries) == 1:
     pais_texto = f"{top_countries[0]} fue el país con más Grandes Premios: {top_count} en total."
+elif len(top_countries) == 2:
+    pais1, pais2 = top_countries
+    conjuncion = "e" if pais2.strip().lower().startswith("i") else "y"
+    lista_paises = f"{pais1} {conjuncion} {pais2}"
+    pais_texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
 else:
-    if len(top_countries) == 2:
-        pais1, pais2 = top_countries
-        conjuncion = "e" if pais2.strip().lower().startswith("i") else "y"
-        lista_paises = f"{pais1} {conjuncion} {pais2}"
-     else:
-        lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
-        pais_texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
+    lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
+    pais_texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
+
 
 st.success(pais_texto[0].upper() + pais_texto[1:])
 
