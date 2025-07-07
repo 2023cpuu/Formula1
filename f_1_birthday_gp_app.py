@@ -264,6 +264,57 @@ with tab2:
         st.dataframe(victorias_escuderia, use_container_width=True)
 
 
+st.subheader("🛠️ ¿Qué escudería usarías?")
+st.markdown("Responde este breve test y descubre qué escudería de los 50s te representa mejor.")
+
+preguntas = {
+    "¿Cuál es tu estilo de conducción?": {
+        "Conservador, prefiero la estrategia": "estratega",
+        "A la ofensiva, siempre al límite": "agresivo",
+        "Equilibrado, me adapto": "equilibrado"
+    },
+    "¿Qué valoras más en una escudería?": {
+        "Innovación y tecnología": "innovador",
+        "Pasión y tradición": "tradicional",
+        "Precisión y eficiencia": "preciso"
+    },
+    "¿Qué tipo de piloto te identificas más?": {
+        "Líder calmado y analítico": "calculador",
+        "Carismático y arriesgado": "valiente",
+        "Constante y técnico": "disciplinado"
+    }
+}
+
+respuestas = []
+
+for i, (pregunta, opciones) in enumerate(preguntas.items()):
+    st.markdown(f"**{i+1}. {pregunta}**")
+    respuesta = st.radio("", list(opciones.keys()), key=f"preg_{i}")
+    respuestas.append(opciones[respuesta])
+
+# Lógica simple de asignación
+if st.button("Descubrir mi escudería ideal"):
+    conteo = pd.Series(respuestas).value_counts()
+    resultado = conteo.idxmax()
+
+    # Asignaciones según perfil dominante
+    perfil_to_team = {
+        "agresivo": "Maserati",
+        "estratega": "Ferrari",
+        "equilibrado": "Vanwall",
+        "tradicional": "Alfa Romeo",
+        "innovador": "Cooper",
+        "preciso": "Mercedes",
+        "valiente": "BRM",
+        "calculador": "Ferrari",
+        "disciplinado": "Gordini"
+    }
+
+    escudería = perfil_to_team.get(resultado, "Ferrari")
+    st.success(f"🏁 ¡Tu escudería ideal es **{escudería}**!")
+
+
+
 st.subheader("🧠 Trivia")
 
 # ---------- Preguntas ampliadas ----------
