@@ -191,22 +191,22 @@ st.altair_chart(chart_teams, use_container_width=True)
 
     # 🌍 País con más carreras
 st.subheader("🌍 País con más carreras en los 50s")
-    country_counts = races_df["País"].value_counts()
-    top_count = country_counts.max()
-    top_countries = country_counts[country_counts == top_count].index.tolist()
+country_counts = races_df["País"].value_counts()
+top_count = country_counts.max()
+top_countries = country_counts[country_counts == top_count].index.tolist()
 
-    if len(top_countries) == 1:
-        pais_texto = f"{top_countries[0]} fue el país con más Grandes Premios: {top_count} en total."
-    else:
-        if len(top_countries) == 2:
-            pais1, pais2 = top_countries
-            conjuncion = "e" if pais2.strip().lower().startswith("i") else "y"
-            lista_paises = f"{pais1} {conjuncion} {pais2}"
-        else:
-            lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
+if len(top_countries) == 1:
+    pais_texto = f"{top_countries[0]} fue el país con más Grandes Premios: {top_count} en total."
+else:
+    if len(top_countries) == 2:
+        pais1, pais2 = top_countries
+        conjuncion = "e" if pais2.strip().lower().startswith("i") else "y"
+        lista_paises = f"{pais1} {conjuncion} {pais2}"
+     else:
+        lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
         pais_texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
 
-    st.success(pais_texto[0].upper() + pais_texto[1:])
+st.success(pais_texto[0].upper() + pais_texto[1:])
 
     with st.expander("📊 Ver el top 5 de países con más carreras"):
         top5_countries = country_counts.head(5).reset_index()
