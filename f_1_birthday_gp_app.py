@@ -155,18 +155,22 @@ with st.container():
             mensaje = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest['Winner']} con {closest['Team']}."
             st.info(mensaje[0].upper() + mensaje[1:])
     # 🏆 Piloto con más victorias
-    st.subheader("🏆 Piloto con más victorias en los 50s")
-    top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
-    top5_winners.index += 1
-    top5_winners.columns = ["Piloto", "Victorias"]
-    st.table(top5_winners)
+st.subheader("🏆 Piloto con más victorias en los 50s")
+top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
+top5_winners.columns = ["Piloto", "Victorias"]
+top5_winners.index += 1
+
+st.bar_chart(top5_winners.set_index("Piloto"))
+
 
     # 🔧 Escudería más dominante
-    st.subheader("🔧 Escudería más dominante de los 50s")
-    top5_teams = races_df["Team"].value_counts().head(5).reset_index()
-    top5_teams.index += 1
-    top5_teams.columns = ["Escudería", "Victorias"]
-    st.table(top5_teams)
+st.subheader("🔧 Escudería más dominante de los 50s")
+top5_teams = races_df["Team"].value_counts().head(5).reset_index()
+top5_teams.columns = ["Escudería", "Victorias"]
+top5_teams.index += 1
+
+st.bar_chart(top5_teams.set_index("Escudería"))
+
 
     # 🌍 País con más carreras
     st.subheader("🌍 País con más carreras en los 50s")
