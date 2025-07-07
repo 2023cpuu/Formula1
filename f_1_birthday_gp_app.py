@@ -333,39 +333,6 @@ if st.button("Descubrir mi escudería ideal"):
         escuderia = perfil_to_team.get(resultado, "Ferrari")
         st.success(f"🏁 ¡Tu escudería ideal es **{escuderia}**!")
 
-import matplotlib.pyplot as plt
-
-# Mostrar resultado al finalizar el test de escuderías
-if st.session_state.pregunta_index >= len(preguntas_escuderia):
-    puntajes = {
-        "Ferrari": st.session_state.puntos_ferrari,
-        "Maserati": st.session_state.puntos_maserati,
-        "Mercedes": st.session_state.puntos_mercedes,
-        "Cooper": st.session_state.puntos_cooper
-    }
-
-    total = sum(puntajes.values())
-    
-    if total == 0:
-        st.warning("No respondiste el test o todas tus respuestas fueron neutras.")
-    else:
-        labels = []
-        sizes = []
-        for equipo, puntos in puntajes.items():
-            if puntos > 0:
-                labels.append(equipo)
-                sizes.append(puntos / total * 100)
-
-        colors = ['#d50000', '#007bff', '#00b894', '#ff9800']
-        fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140, colors=colors)
-        ax.axis('equal')
-        
-        st.markdown("### 🏁 Tu escudería ideal según el test:")
-        st.pyplot(fig)
-
-
-
 
 st.subheader("🧠 Trivia")
 
