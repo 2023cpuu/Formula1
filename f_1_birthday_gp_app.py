@@ -235,30 +235,33 @@ country_coords = {
     "Marruecos": [33.58, -7.62]
 }
 
-# ======================= MAPA INTERACTIVO (1 punto por país, tooltip con todos los circuitos) =======================
+# ======================= CIRCUITOS POR PAÍS (usado en el mapa también) =======================
+circuitos_por_pais = {}
+for gp, pais in gp_to_country.items():
+    if gp in gp_to_circuits:
+        circuitos_por_pais.setdefault(pais, set()).update(gp_to_circuits[gp])
+
+# ======================= MAPA INTERACTIVO (por país con circuitos en tooltip) =======================
 st.subheader("🗺️ Mapa de países con carreras en los años 50")
 
+# Armar datos para el mapa
 map_data = []
 for country, count in country_counts.items():
     if country in country_coords:
         lat, lon = country_coords[country]
         circuitos = sorted(circuitos_por_pais.get(country, []))
-        tooltip_text = f"{country}: {count} carreras"
-        if circuitos:
-            tooltip_text += f"\nCircuitos: {', '.join(circuitos)}"
+        tooltip_text = f"{country}: {count} carreras\nCircuitos: {', '.join(circuitos)}"
         map_data.append({
             "País": country,
-            "Carreras": count,
             "Lat": lat,
             "Lon": lon,
+            "Carreras": count,
             "Tooltip": tooltip_text
         })
-    else:
-        st.warning(f"No hay coordenadas para {country}")
 
 map_df = pd.DataFrame(map_data)
 
-# Capa de puntos (una por país)
+# Capa de puntos
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=map_df,
@@ -270,6 +273,7 @@ layer = pdk.Layer(
 )
 
 view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
+
 st.pydeck_chart(pdk.Deck(
     layers=[layer],
     initial_view_state=view_state,
