@@ -209,20 +209,20 @@ else:
 
 st.success(pais_texto[0].upper() + pais_texto[1:])
 
-    with st.expander("📊 Ver el top 5 de países con más carreras"):
-        top5_countries = country_counts.head(5).reset_index()
-        top5_countries.index += 1
-        top5_countries.columns = ["País", "Carreras"]
-        st.table(top5_countries)
+with st.expander("📊 Ver el top 5 de países con más carreras"):
+    top5_countries = country_counts.head(5).reset_index()
+    top5_countries.index += 1
+    top5_countries.columns = ["País", "Carreras"]
+    st.table(top5_countries)
 
     # 🏟️ Circuitos por país
-    with st.expander("🏟️ Ver los circuitos usados en cada país"):
-        circuitos_por_pais = {}
-        for gp, pais in gp_to_country.items():
-            if gp in gp_to_circuits:
-                circuitos_por_pais.setdefault(pais, set()).update(gp_to_circuits[gp])
-        for pais, circuitos in circuitos_por_pais.items():
-            st.markdown(f"**{pais}**: {', '.join(sorted(circuitos))}")
+with st.expander("🏟️ Ver los circuitos usados en cada país"):
+    circuitos_por_pais = {}
+    for gp, pais in gp_to_country.items():
+        if gp in gp_to_circuits:
+            circuitos_por_pais.setdefault(pais, set()).update(gp_to_circuits[gp])
+    for pais, circuitos in circuitos_por_pais.items():
+        st.markdown(f"**{pais}**: {', '.join(sorted(circuitos))}")
         st.caption("📝 *Nota: Se muestran todos los circuitos usados por país en los años 50.*")
 
 # ======================= COORDENADAS DE PAÍSES =======================
