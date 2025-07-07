@@ -66,6 +66,20 @@ time.sleep(3.5)
 # ======================= TÍTULO PRINCIPAL =======================
 st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
 st.image("https://i.imgur.com/tXsjOO5.png", caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
+st.markdown("""
+<div style="background-color: rgba(255, 255, 255, 0.92); padding: 1.5rem; border-radius: 12px; margin-top: 1rem;">
+    <h4 style="color: black;">🏁 Bienvenido a la era dorada de la F1</h4>
+    <p style="color: black; font-size: 16px; line-height: 1.6;">
+        Antes de los autos híbridos, de los cascos ultratecnológicos y de las radios con estrategias complicadas, la Fórmula 1 era puro corazón, instinto y gasolina. Los años 50 fueron el inicio de una leyenda: pilotos temerarios, escuderías míticas y circuitos que hacían historia vuelta a vuelta.
+    </p>
+    <p style="color: black; font-size: 16px; line-height: 1.6;">
+        Esta página no es solo una base de datos: es un viaje interactivo a la década donde todo comenzó. ¿Hubo una carrera en tu cumpleaños? ¿Qué equipo de los 50s te representa más? ¿Cuánto sabes realmente sobre Fangio, Ascari o los peligrosos circuitos de la época?
+    </p>
+    <p style="color: black; font-size: 16px; font-weight: bold;">
+        Explora, juega, descubre. Porque entender el presente de la F1 también es rendir homenaje a su pasado más bravo. 🏎️✨
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 
 with st.container():
