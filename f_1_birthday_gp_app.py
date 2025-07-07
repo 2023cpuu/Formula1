@@ -239,14 +239,16 @@ st.subheader("🗺️ Mapa de países con carreras en los años 50")
 map_data = []
 for country, count in country_counts.items():
     if country in country_coords:
-        lat, lon = country_coords[country]
-        map_data.append({
-            "País": country,
-            "Lat": lat,
-            "Lon": lon,
-            "Carreras": count
+    lat, lon = country_coords[country]
+    circuit_list = circuits_by_country.get(country, [])
+    for circuito in circuit_list:
+        icon_layer.append({
+            "coordinates": [lon, lat],
+            "tooltip": f"{circuito}, {country}"
         })
-map_df = pd.DataFrame(map_data)
+else:
+    st.warning(f"No hay coordenadas para {country}")
+
 
 # Capa de puntos más discretos
 layer = pdk.Layer(
