@@ -190,7 +190,7 @@ st.altair_chart(chart_teams, use_container_width=True)
 
 
     # 🌍 País con más carreras
-    st.subheader("🌍 País con más carreras en los 50s")
+st.subheader("🌍 País con más carreras en los 50s")
     country_counts = races_df["País"].value_counts()
     top_count = country_counts.max()
     top_countries = country_counts[country_counts == top_count].index.tolist()
