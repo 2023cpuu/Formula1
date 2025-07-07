@@ -263,7 +263,6 @@ with tab2:
         victorias_escuderia.index.name = "N°"
         st.dataframe(victorias_escuderia, use_container_width=True)
 
-
 st.subheader("🛠️ ¿Qué escudería usarías?")
 st.markdown("Responde este breve test y descubre qué escudería de los 50s te representa mejor.")
 
@@ -286,32 +285,39 @@ preguntas = {
 }
 
 respuestas = []
+todo_listo = True
 
 for i, (pregunta, opciones) in enumerate(preguntas.items()):
     st.markdown(f"**{i+1}. {pregunta}**")
-    respuesta = st.radio("", list(opciones.keys()), key=f"preg_{i}")
-    respuestas.append(opciones[respuesta])
+    opciones_con_placeholder = ["Selecciona una opción..."] + list(opciones.keys())
+    seleccion = st.selectbox("", opciones_con_placeholder, key=f"preg_{i}")
+    
+    if seleccion == "Selecciona una opción...":
+        todo_listo = False
+    else:
+        respuestas.append(opciones[seleccion])
 
-# Lógica simple de asignación
 if st.button("Descubrir mi escudería ideal"):
-    conteo = pd.Series(respuestas).value_counts()
-    resultado = conteo.idxmax()
+    if not todo_listo:
+        st.warning("Por favor responde todas las preguntas antes de continuar.")
+    else:
+        conteo = pd.Series(respuestas).value_counts()
+        resultado = conteo.idxmax()
 
-    # Asignaciones según perfil dominante
-    perfil_to_team = {
-        "agresivo": "Maserati",
-        "estratega": "Ferrari",
-        "equilibrado": "Vanwall",
-        "tradicional": "Alfa Romeo",
-        "innovador": "Cooper",
-        "preciso": "Mercedes",
-        "valiente": "BRM",
-        "calculador": "Ferrari",
-        "disciplinado": "Gordini"
-    }
+        perfil_to_team = {
+            "agresivo": "Maserati",
+            "estratega": "Ferrari",
+            "equilibrado": "Vanwall",
+            "tradicional": "Alfa Romeo",
+            "innovador": "Cooper",
+            "preciso": "Mercedes",
+            "valiente": "BRM",
+            "calculador": "Ferrari",
+            "disciplinado": "Gordini"
+        }
 
-    escudería = perfil_to_team.get(resultado, "Ferrari")
-    st.success(f"🏁 ¡Tu escudería ideal es **{escudería}**!")
+        escuderia = perfil_to_team.get(resultado, "Ferrari")
+        st.success(f"🏁 ¡Tu escudería ideal es **{escuderia}**!")
 
 
 
