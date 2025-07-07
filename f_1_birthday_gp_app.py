@@ -235,29 +235,36 @@ country_coords = {
     "Marruecos": [33.58, -7.62]
 }
 
-# ======================= MAPA INTERACTIVO (mejorado) =======================
+# ======================= MAPA INTERACTIVO (corregido y funcional) =======================
 st.subheader("🗺️ Mapa de países con carreras en los años 50")
 
 map_data = []
+icon_layer = []
+
 for country, count in country_counts.items():
     if country in country_coords:
         lat, lon = country_coords[country]
         circuit_list = circuits_by_country.get(country, [])
-    for circuito in circuit_list:
-        icon_layer.append({
-            "coordinates": [lon, lat],
-            "tooltip": f"{circuito}, {country}"
-        })
-else:
-    st.warning(f"No hay coordenadas para {country}")
+        for circuito in circuit_list:
+            icon_layer.append({
+                "País": country,
+                "Carreras": count,
+                "Circuito": circuito,
+                "Lat": lat,
+                "Lon": lon
+            })
+    else:
+        st.warning(f"No hay coordenadas para {country}")
 
+# Crear DataFrame para mapa
+map_df = pd.DataFrame(icon_layer)
 
-# Capa de puntos más discretos
+# Capa de puntos
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=map_df,
     get_position='[Lon, Lat]',
-    get_radius="Carreras * 30000",
+    get_radius=30000,
     get_fill_color=[255, 0, 0, 180],
     pickable=True,
     auto_highlight=True
@@ -267,8 +274,9 @@ view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
 st.pydeck_chart(pdk.Deck(
     layers=[layer],
     initial_view_state=view_state,
-    tooltip={"text": "{País}: {Carreras} carreras"}
+    tooltip={"text": "{Circuito}, {País}: {Carreras} carreras"}
 ))
+
 
 st.subheader("🔍 Explora desempeño de pilotos y escuderías")
 
