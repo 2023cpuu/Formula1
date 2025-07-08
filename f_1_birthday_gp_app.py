@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
+import altair as alt
 from datetime import datetime
 import time
 import random
 
-# ======================= ESTILO CSS: fondo a cuadros y contenedor blanco =======================
+# ======================= ESTILO CSS =======================
 st.markdown(
     """
     <style>
@@ -17,17 +18,13 @@ st.markdown(
         background-image: repeating-conic-gradient(#fff 0% 25%, #000 0% 50%);
         background-size: 40px 40px;
     }
-
     .block-container {
         background-color: rgba(255, 255, 255, 0.95);
         padding: 3rem;
         border-radius: 15px;
         box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
     }
-
-    .block-container h1, .block-container h2, .block-container h3,
-    .block-container h4, .block-container h5, .block-container h6,
-    .block-container p, .block-container label, .block-container div {
+    .block-container * {
         color: black !important;
     }
     </style>
@@ -35,11 +32,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ======================= ANIMACIÓN DE AUTO (derecha a izquierda) =======================
-import time  # Asegúrate de tener este importado arriba si no lo tienes
-
-import time  # Asegúrate de importar esto
-
+# ======================= ANIMACIÓN DE AUTO =======================
 car_animation = """
 <div style="position:relative; height:160px; overflow:hidden;">
     <div style="
@@ -51,7 +44,6 @@ car_animation = """
         🏎️💨
     </div>
 </div>
-
 <style>
 @keyframes drive {
     0% { left: 100%; }
@@ -59,14 +51,14 @@ car_animation = """
 }
 </style>
 """
-
 st.markdown(car_animation, unsafe_allow_html=True)
 time.sleep(3.5)
 
 # ======================= TÍTULO PRINCIPAL =======================
 st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
-
 st.image("https://i.imgur.com/tXsjOO5.png", caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
+
+# ======================= INTRO TEXTO =======================
 st.markdown("""
 <div style="background-color: rgba(255, 255, 255, 0.92); padding: 1.5rem; border-radius: 12px; margin-top: 1rem;">
     <h4 style="color: black;">🏁 Bienvenido a la era dorada de la F1</h4>
@@ -83,53 +75,47 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# ======================= DATOS Y MAPEOS =======================
+@st.cache_data
+def load_data():
+    df = pd.read_csv("F1_1950s_Race_Results_FULL.csv")
+    df["Date_Parsed"] = pd.to_datetime(df["Date"], format="%d %b %Y", errors='coerce')
+    return df.dropna(subset=["Date_Parsed"])
 
-with st.container():
-    st.markdown('<div class="main-container">', unsafe_allow_html=True)
+races_df = load_data()
 
-    # Cargar datos
-    @st.cache_data
-    def load_data():
-        df = pd.read_csv("F1_1950s_Race_Results_FULL.csv")
-        df["Date_Parsed"] = pd.to_datetime(df["Date"], format="%d %b %Y", errors='coerce')
-        return df.dropna(subset=["Date_Parsed"])
+gp_to_country = {
+    "British": "Reino Unido", "French": "Francia", "Italian": "Italia", "German": "Alemania",
+    "Monaco": "Mónaco", "Belgian": "Bélgica", "Dutch": "Países Bajos", "Swiss": "Suiza",
+    "Argentine": "Argentina", "Indianapolis 500": "Estados Unidos", "Spanish": "España",
+    "Portuguese": "Portugal", "Moroccan": "Marruecos"
+}
 
-    races_df = load_data()
+month_translation = {
+    "Jan": "Enero", "Feb": "Febrero", "Mar": "Marzo", "Apr": "Abril", "May": "Mayo", "Jun": "Junio",
+    "Jul": "Julio", "Aug": "Agosto", "Sep": "Septiembre", "Oct": "Octubre", "Nov": "Noviembre", "Dec": "Diciembre"
+}
 
-    gp_to_country = {
-        "British": "Reino Unido", "French": "Francia", "Italian": "Italia", "German": "Alemania",
-        "Monaco": "Mónaco", "Belgian": "Bélgica", "Dutch": "Países Bajos", "Swiss": "Suiza",
-        "Argentine": "Argentina", "Indianapolis 500": "Estados Unidos", "Spanish": "España",
-        "Portuguese": "Portugal", "Moroccan": "Marruecos"
-    }
+gp_to_circuits = {
+    "Argentine": ["Autódromo Juan y Oscar Gálvez"],
+    "Belgian": ["Spa-Francorchamps"],
+    "British": ["Silverstone", "Aintree"],
+    "Dutch": ["Zandvoort"],
+    "French": ["Reims-Gueux", "Rouen-Les-Essarts"],
+    "German": ["Nürburgring", "AVUS"],
+    "Indianapolis 500": ["Indianapolis Motor Speedway"],
+    "Italian": ["Autodromo Nazionale Monza"],
+    "Monaco": ["Circuit de Monaco"],
+    "Moroccan": ["Ain-Diab Circuit"],
+    "Portuguese": ["Boavista", "Monsanto Park"],
+    "Spanish": ["Pedralbes"],
+    "Swiss": ["Bremgarten"]
+}
 
-    month_translation = {
-        "Jan": "Enero", "Feb": "Febrero", "Mar": "Marzo", "Apr": "Abril", "May": "Mayo", "Jun": "Junio",
-        "Jul": "Julio", "Aug": "Agosto", "Sep": "Septiembre", "Oct": "Octubre", "Nov": "Noviembre", "Dec": "Diciembre"
-    }
+races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
 
-    gp_to_circuits = {
-        "Argentine": ["Autódromo Juan y Oscar Gálvez"],
-        "Belgian": ["Spa-Francorchamps"],
-        "British": ["Silverstone", "Aintree"],
-        "Dutch": ["Zandvoort"],
-        "French": ["Reims-Gueux", "Rouen-Les-Essarts"],
-        "German": ["Nürburgring", "AVUS"],
-        "Indianapolis 500": ["Indianapolis Motor Speedway"],
-        "Italian": ["Autodromo Nazionale Monza"],
-        "Monaco": ["Circuit de Monaco"],
-        "Moroccan": ["Ain-Diab Circuit"],
-        "Portuguese": ["Boavista", "Monsanto Park"],
-        "Spanish": ["Pedralbes"],
-        "Swiss": ["Bremgarten"]
-    }
-
-    # Traducción país
-    races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
-
-# ====== Sección nueva: ¿Por qué los 50s? ======
+# ======================= ¿Por qué volver a los 50s? =======================
 st.subheader("⏳ ¿Por qué volver a los 50s?")
-
 st.markdown("""
 <p style="font-size: 16px; line-height: 1.6;">
 En la era del streaming, las estadísticas y los monoplazas futuristas, a veces olvidamos cómo empezó todo. 
@@ -138,26 +124,8 @@ Pocos conocen esta parte de la historia. Esta plataforma te invita a redescubrir
 </p>
 """, unsafe_allow_html=True)
 
-races_df = load_data()
-
-# === Top 5 pilotos con más victorias en los 50s ===
-top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
-top5_winners.columns = ["Piloto", "Victorias"]
-top5_winners.index += 1
-
+# ======================= Top 5 pilotos con más victorias =======================
 st.subheader("🏆 Piloto con más victorias en los 50s")
-
-chart_winners = alt.Chart(top5_winners).mark_bar(color='crimson').encode(
-    x=alt.X("Victorias:Q", axis=alt.Axis(title="Victorias", format="d")),
-    y=alt.Y("Piloto:N", sort='-x', title=""),
-    tooltip=["Piloto", "Victorias"]
-).properties(width=600, height=250)
-
-st.altair_chart(chart_winners, use_container_width=True)
-
-
-st.subheader("🏆 Piloto con más victorias en los 50s")
-
 top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
 top5_winners.columns = ["Piloto", "Victorias"]
 top5_winners.index += 1
@@ -170,10 +138,8 @@ chart_winners = alt.Chart(top5_winners).mark_bar(color='crimson').encode(
 
 st.altair_chart(chart_winners, use_container_width=True)
 
-
-    # 🔧 Escudería más dominante
+# ======================= Escudería más dominante =======================
 st.subheader("🔧 Escudería más dominante de los 50s")
-
 top5_teams = races_df["Team"].value_counts().head(5).reset_index()
 top5_teams.columns = ["Escudería", "Victorias"]
 top5_teams.index += 1
@@ -186,6 +152,7 @@ chart_teams = alt.Chart(top5_teams).mark_bar(color='steelblue').encode(
 
 st.altair_chart(chart_teams, use_container_width=True)
 
+# ======================= Línea del tiempo =======================
 st.subheader("📜 Línea del tiempo interactiva: Fórmula 1 en los años 50")
 
 eventos_f1_50s = {
@@ -205,42 +172,37 @@ for año, evento in eventos_f1_50s.items():
     with st.expander(f"📅 {año}"):
         st.markdown(f"<div style='font-size:16px'>{evento}</div>", unsafe_allow_html=True)
 
+# ======================= ¿Hubo carrera en tu cumpleaños? =======================
+st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
 
-  # 🎂 ¿Hubo carrera en tu cumpleaños?
-    st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
-    col1, col2 = st.columns(2)
-    birth_day = col1.selectbox("Día", [""] + list(range(1, 32)))
-    birth_month_name = col2.selectbox("Mes", [""] + list(month_translation.values()))
+col1, col2 = st.columns(2)
+birth_day = col1.selectbox("Día", [""] + list(range(1, 32)))
+birth_month_name = col2.selectbox("Mes", [""] + list(month_translation.values()))
 
-    if birth_day and birth_month_name:
-        month_number = list(month_translation.values()).index(birth_month_name)
-        matching_races = races_df[
-            (races_df["Date_Parsed"].dt.day == int(birth_day)) &
-            (races_df["Date_Parsed"].dt.month == month_number + 1)
-        ]
+if birth_day and birth_month_name:
+    month_number = list(month_translation.values()).index(birth_month_name)
+    matching_races = races_df[
+        (races_df["Date_Parsed"].dt.day == int(birth_day)) &
+        (races_df["Date_Parsed"].dt.month == month_number + 1)
+    ]
 
-        if not matching_races.empty:
-            st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
-            st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]])
-        else:
-            st.warning("😢 No hubo ningún Grand Prix ese día.")
-            # Carrera más cercana
-            st.subheader("📅 Carrera más cercana a tu cumpleaños")
-            ref_date = datetime(1955, month_number + 1, int(birth_day))
-            races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
-            closest = races_df.loc[races_df["Diff"].idxmin()]
-            fecha_gp = closest["Date_Parsed"]
-            mes_es = month_translation[fecha_gp.strftime("%b")]
-            fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
-            gp_name = gp_to_country.get(closest["Grand Prix"], closest["Grand Prix"])
-            mensaje = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest['Winner']} con {closest['Team']}."
-            st.info(mensaje[0].upper() + mensaje[1:])
-    
-import altair as alt
+    if not matching_races.empty:
+        st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
+        st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]])
+    else:
+        st.warning("😢 No hubo ningún Grand Prix ese día.")
+        st.subheader("📅 Carrera más cercana a tu cumpleaños")
+        ref_date = datetime(1955, month_number + 1, int(birth_day))
+        races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
+        closest = races_df.loc[races_df["Diff"].idxmin()]
+        fecha_gp = closest["Date_Parsed"]
+        mes_es = month_translation[fecha_gp.strftime("%b")]
+        fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
+        gp_name = gp_to_country.get(closest["Grand Prix"], closest["Grand Prix"])
+        mensaje = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest['Winner']} con {closest['Team']}."
+        st.info(mensaje[0].upper() + mensaje[1:])
 
-
-
-    # 🌍 País con más carreras
+# ======================= Mapa por país con carreras =======================
 st.subheader("🌍 País con más carreras en los 50s")
 country_counts = races_df["País"].value_counts()
 top_count = country_counts.max()
@@ -257,7 +219,6 @@ else:
     lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
     pais_texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
 
-
 st.success(pais_texto[0].upper() + pais_texto[1:])
 
 with st.expander("📊 Ver el top 5 de países con más carreras"):
@@ -266,36 +227,9 @@ with st.expander("📊 Ver el top 5 de países con más carreras"):
     top5_countries.columns = ["País", "Carreras"]
     st.table(top5_countries)
 
-    # 🏟️ Circuitos por país
-    circuits_by_country = {}
-    for gp, pais in gp_to_country.items():
-        if gp in gp_to_circuits:
-            circuits_by_country.setdefault(pais, set()).update(gp_to_circuits[gp])
-
-    with st.expander("🏟️ Ver los circuitos usados en cada país"):
-        for pais, circuitos in circuits_by_country.items():
-            st.markdown(f"**{pais}**: {', '.join(sorted(circuitos))}")
-        st.caption("📝 *Nota: Se muestran todos los circuitos usados por país en los años 50.*")
-
-# ======================= COORDENADAS DE PAÍSES =======================
-country_coords = {
-    "Reino Unido": [51.5, -0.1], "Francia": [48.85, 2.35], "Italia": [41.9, 12.5],
-    "Alemania": [52.52, 13.4], "Mónaco": [43.73, 7.42], "Bélgica": [50.85, 4.35],
-    "Países Bajos": [52.37, 4.89], "Suiza": [46.95, 7.45], "Argentina": [-34.6, -58.38],
-    "Estados Unidos": [39.8, -86.1], "España": [40.42, -3.7], "Portugal": [38.72, -9.14],
-    "Marruecos": [33.58, -7.62]
-}
-
-# ======================= CIRCUITOS POR PAÍS (usado en el mapa también) =======================
-circuitos_por_pais = {}
-for gp, pais in gp_to_country.items():
-    if gp in gp_to_circuits:
-        circuitos_por_pais.setdefault(pais, set()).update(gp_to_circuits[gp])
-
-# ======================= MAPA INTERACTIVO (por país con circuitos en tooltip) =======================
+# ======================= Mapa de países con circuitos =======================
 st.subheader("🗺️ Mapa de países con carreras en los años 50")
 
-# Armar datos para el mapa
 map_data = []
 for country, count in country_counts.items():
     if country in country_coords:
@@ -312,7 +246,6 @@ for country, count in country_counts.items():
 
 map_df = pd.DataFrame(map_data)
 
-# Capa de puntos
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=map_df,
@@ -331,7 +264,7 @@ st.pydeck_chart(pdk.Deck(
     tooltip={"text": "{Tooltip}"}
 ))
 
-
+# ======================= Desempeño por piloto o escudería =======================
 st.subheader("🔍 Explora desempeño de pilotos y escuderías")
 
 st.markdown("Selecciona **una sola opción** para ver el historial de victorias de un piloto o una escudería:")
@@ -364,6 +297,7 @@ with tab2:
         victorias_escuderia.index.name = "N°"
         st.dataframe(victorias_escuderia, use_container_width=True)
 
+# ======================= Test: ¿Qué escudería usarías? =======================
 st.subheader("🛠️ ¿Qué escudería usarías?")
 st.markdown("Responde este breve test y descubre qué escudería de los 50s te representa mejor.")
 
@@ -420,10 +354,9 @@ if st.button("Descubrir mi escudería ideal"):
         escuderia = perfil_to_team.get(resultado, "Ferrari")
         st.success(f"🏁 ¡Tu escudería ideal es **{escuderia}**!")
 
-
+# ======================= Trivia F1 de los 50s =======================
 st.subheader("🧠 Trivia")
 
-# ---------- Preguntas ampliadas ----------
 trivia_preguntas = [
     {
         "pregunta": "¿Qué piloto ganó más carreras en la década de 1950?",
@@ -457,7 +390,6 @@ trivia_preguntas = [
     }
 ]
 
-# ---------- Estado ----------
 if "trivia_index" not in st.session_state:
     st.session_state.trivia_index = 0
 if "trivia_opcion" not in st.session_state:
@@ -469,7 +401,6 @@ if "trivia_resultado" not in st.session_state:
 if "trivia_puntaje" not in st.session_state:
     st.session_state.trivia_puntaje = 0
 
-# ---------- Funciones ----------
 def comprobar_respuesta():
     if st.session_state.trivia_opcion == "Selecciona una opción" or st.session_state.trivia_opcion is None:
         st.warning("Selecciona una opción válida.")
@@ -486,7 +417,6 @@ def siguiente_pregunta():
     st.session_state.trivia_respondida = False
     st.session_state.trivia_resultado = False
 
-# ---------- Mostrar Pregunta ----------
 if st.session_state.trivia_index < len(trivia_preguntas):
     q = trivia_preguntas[st.session_state.trivia_index]
     opciones = ["Selecciona una opción"] + q["opciones"]
@@ -510,3 +440,4 @@ if st.session_state.trivia_index < len(trivia_preguntas):
 
 else:
     st.success(f"🎉 ¡Has terminado la trivia! Obtuviste {st.session_state.trivia_puntaje} de {len(trivia_preguntas)} puntos.")
+
