@@ -127,7 +127,68 @@ with st.container():
     # Traducción país
     races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
 
-    # 🎂 ¿Hubo carrera en tu cumpleaños?
+# ====== Sección nueva: ¿Por qué los 50s? ======
+st.subheader("⏳ ¿Por qué volver a los 50s?")
+
+st.markdown("""
+<p style="font-size: 16px; line-height: 1.6;">
+En la era del streaming, las estadísticas y los monoplazas futuristas, a veces olvidamos cómo empezó todo. 
+Los años 50 fueron más que una introducción: fueron una época donde cada victoria era una hazaña y cada circuito, un riesgo real. 
+Pocos conocen esta parte de la historia. Esta plataforma te invita a redescubrirla, interactuar con ella y hacerla tuya.
+</p>
+""", unsafe_allow_html=True)
+
+st.subheader("🏆 Piloto con más victorias en los 50s")
+
+top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
+top5_winners.columns = ["Piloto", "Victorias"]
+top5_winners.index += 1
+
+chart_winners = alt.Chart(top5_winners).mark_bar(color='crimson').encode(
+    x=alt.X("Victorias:Q", axis=alt.Axis(title="Victorias", format="d")),
+    y=alt.Y("Piloto:N", sort='-x', title=""),
+    tooltip=["Piloto", "Victorias"]
+).properties(width=600, height=250)
+
+st.altair_chart(chart_winners, use_container_width=True)
+
+
+    # 🔧 Escudería más dominante
+st.subheader("🔧 Escudería más dominante de los 50s")
+
+top5_teams = races_df["Team"].value_counts().head(5).reset_index()
+top5_teams.columns = ["Escudería", "Victorias"]
+top5_teams.index += 1
+
+chart_teams = alt.Chart(top5_teams).mark_bar(color='steelblue').encode(
+    x=alt.X("Victorias:Q", axis=alt.Axis(title="Victorias", format="d")),
+    y=alt.Y("Escudería:N", sort='-x', title=""),
+    tooltip=["Escudería", "Victorias"]
+).properties(width=600, height=250)
+
+st.altair_chart(chart_teams, use_container_width=True)
+
+st.subheader("📜 Línea del tiempo interactiva: Fórmula 1 en los años 50")
+
+eventos_f1_50s = {
+    1950: "🏁 Primer campeonato oficial de F1. Farina vence a Fangio y gana el primer título.",
+    1951: "🇦🇷 Fangio gana su primer campeonato con Alfa Romeo. Se convierte en una figura dominante.",
+    1952: "🔧 Ferrari domina tras la salida de Alfa Romeo. Ascari gana 6 carreras.",
+    1953: "🏎️ Ascari repite título con Ferrari. Temporada marcada por su consistencia.",
+    1954: "⚙️ Fangio empieza con Maserati, termina con Mercedes… ¡y gana el título!",
+    1955: "☠️ Tragedia en Le Mans (80 muertos). Mercedes se retira. Fangio vuelve a campeonar.",
+    1956: "🔄 Fangio gana con Ferrari. Cede su auto a Collins para asegurar el título.",
+    1957: "🔥 Fangio gana en Nürburgring tras remontar 48 segundos. Su quinto campeonato.",
+    1958: "🧠 Se establece el campeonato de constructores. Mike Hawthorn gana el título.",
+    1959: "🧪 Cooper innova con motor trasero. Brabham gana su primer título mundial."
+}
+
+for año, evento in eventos_f1_50s.items():
+    with st.expander(f"📅 {año}"):
+        st.markdown(f"<div style='font-size:16px'>{evento}</div>", unsafe_allow_html=True)
+
+
+  # 🎂 ¿Hubo carrera en tu cumpleaños?
     st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
     col1, col2 = st.columns(2)
     birth_day = col1.selectbox("Día", [""] + list(range(1, 32)))
@@ -158,48 +219,6 @@ with st.container():
             st.info(mensaje[0].upper() + mensaje[1:])
     
 import altair as alt
-
-st.subheader("🏆 Piloto con más victorias en los 50s")
-
-top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
-top5_winners.columns = ["Piloto", "Victorias"]
-top5_winners.index += 1
-
-chart_winners = alt.Chart(top5_winners).mark_bar(color='crimson').encode(
-    x=alt.X("Victorias:Q", axis=alt.Axis(title="Victorias", format="d")),
-    y=alt.Y("Piloto:N", sort='-x', title=""),
-    tooltip=["Piloto", "Victorias"]
-).properties(width=600, height=250)
-
-st.altair_chart(chart_winners, use_container_width=True)
-
-# ====== Sección nueva: ¿Por qué los 50s? ======
-st.subheader("⏳ ¿Por qué volver a los 50s?")
-
-st.markdown("""
-<p style="font-size: 16px; line-height: 1.6;">
-En la era del streaming, las estadísticas y los monoplazas futuristas, a veces olvidamos cómo empezó todo. 
-Los años 50 fueron más que una introducción: fueron una época donde cada victoria era una hazaña y cada circuito, un riesgo real. 
-Pocos conocen esta parte de la historia. Esta plataforma te invita a redescubrirla, interactuar con ella y hacerla tuya.
-</p>
-""", unsafe_allow_html=True)
-
-
-
-    # 🔧 Escudería más dominante
-st.subheader("🔧 Escudería más dominante de los 50s")
-
-top5_teams = races_df["Team"].value_counts().head(5).reset_index()
-top5_teams.columns = ["Escudería", "Victorias"]
-top5_teams.index += 1
-
-chart_teams = alt.Chart(top5_teams).mark_bar(color='steelblue').encode(
-    x=alt.X("Victorias:Q", axis=alt.Axis(title="Victorias", format="d")),
-    y=alt.Y("Escudería:N", sort='-x', title=""),
-    tooltip=["Escudería", "Victorias"]
-).properties(width=600, height=250)
-
-st.altair_chart(chart_teams, use_container_width=True)
 
 
 
