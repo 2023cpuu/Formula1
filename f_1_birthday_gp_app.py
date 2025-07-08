@@ -204,6 +204,15 @@ if birth_day and birth_month_name:
         mensaje = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest['Winner']} con {closest['Team']}."
         st.info(mensaje[0].upper() + mensaje[1:])
 
+# ======================= COORDENADAS DE PAÍSES =======================
+country_coords = {
+    "Reino Unido": [51.5, -0.1], "Francia": [48.85, 2.35], "Italia": [41.9, 12.5],
+    "Alemania": [52.52, 13.4], "Mónaco": [43.73, 7.42], "Bélgica": [50.85, 4.35],
+    "Países Bajos": [52.37, 4.89], "Suiza": [46.95, 7.45], "Argentina": [-34.6, -58.38],
+    "Estados Unidos": [39.8, -86.1], "España": [40.42, -3.7], "Portugal": [38.72, -9.14],
+    "Marruecos": [33.58, -7.62]
+}
+
 # ======================= Mapa por país con carreras =======================
 st.subheader("🌍 País con más carreras en los 50s")
 country_counts = races_df["País"].value_counts()
