@@ -65,20 +65,6 @@ time.sleep(3.5)
 
 # ======================= TÍTULO PRINCIPAL =======================
 st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
-st.markdown("""
-<div style="background-color: rgba(255,255,255,0.93); padding: 1rem 1.5rem; border-left: 6px solid crimson; margin-top: 2rem; border-radius: 8px;">
-    <h4 style="color: black;">🎯 Justificación del producto</h4>
-    <p style="color: black; font-size: 16px; line-height: 1.6;">
-        Esta aplicación surge como una <strong>solución comunicacional</strong> al desconocimiento generalizado sobre la Fórmula 1 en su etapa fundacional: la década de 1950. 
-        A través de un enfoque interactivo, visual y educativo, busca conectar a públicos actuales con la historia del automovilismo, destacando pilotos, escuderías y circuitos 
-        icónicos de esa época.
-    </p>
-    <p style="color: black; font-size: 16px; line-height: 1.6;">
-        El uso de Python permite estructurar, visualizar y gamificar datos históricos para crear una experiencia inmersiva que combina análisis deportivo, exploración cultural 
-        y entretenimiento. Es, en esencia, un <em>producto de comunicación digital</em> que traduce estadística en memoria deportiva.
-    </p>
-</div>
-""", unsafe_allow_html=True)
 
 st.image("https://i.imgur.com/tXsjOO5.png", caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
 st.markdown("""
@@ -91,6 +77,7 @@ st.markdown("""
         Esta página no es solo una base de datos: es un viaje interactivo a la década donde todo comenzó. ¿Hubo una carrera en tu cumpleaños? ¿Qué equipo de los 50s te representa más? ¿Cuánto sabes realmente sobre Fangio, Ascari o los peligrosos circuitos de la época?
     </p>
     <p style="color: black; font-size: 16px; font-weight: bold;">
+        Hoy muchos conocen a Verstappen o Hamilton, pero pocos a Fangio o Ascari. Esta web busca cambiar eso.<br>
         Explora, juega, descubre. Porque entender el presente de la F1 también es rendir homenaje a su pasado más bravo. 🏎️✨
     </p>
 </div>
@@ -185,6 +172,18 @@ chart_winners = alt.Chart(top5_winners).mark_bar(color='crimson').encode(
 ).properties(width=600, height=250)
 
 st.altair_chart(chart_winners, use_container_width=True)
+
+# ====== Sección nueva: ¿Por qué los 50s? ======
+st.subheader("⏳ ¿Por qué volver a los 50s?")
+
+st.markdown("""
+<p style="font-size: 16px; line-height: 1.6;">
+En la era del streaming, las estadísticas y los monoplazas futuristas, a veces olvidamos cómo empezó todo. 
+Los años 50 fueron más que una introducción: fueron una época donde cada victoria era una hazaña y cada circuito, un riesgo real. 
+Pocos conocen esta parte de la historia. Esta plataforma te invita a redescubrirla, interactuar con ella y hacerla tuya.
+</p>
+""", unsafe_allow_html=True)
+
 
 
     # 🔧 Escudería más dominante
