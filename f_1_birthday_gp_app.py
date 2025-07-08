@@ -65,6 +65,21 @@ time.sleep(3.5)
 
 # ======================= TÍTULO PRINCIPAL =======================
 st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
+st.markdown("""
+<div style="background-color: rgba(255,255,255,0.93); padding: 1rem 1.5rem; border-left: 6px solid crimson; margin-top: 2rem; border-radius: 8px;">
+    <h4 style="color: black;">🎯 Justificación del producto</h4>
+    <p style="color: black; font-size: 16px; line-height: 1.6;">
+        Esta aplicación surge como una <strong>solución comunicacional</strong> al desconocimiento generalizado sobre la Fórmula 1 en su etapa fundacional: la década de 1950. 
+        A través de un enfoque interactivo, visual y educativo, busca conectar a públicos actuales con la historia del automovilismo, destacando pilotos, escuderías y circuitos 
+        icónicos de esa época.
+    </p>
+    <p style="color: black; font-size: 16px; line-height: 1.6;">
+        El uso de Python permite estructurar, visualizar y gamificar datos históricos para crear una experiencia inmersiva que combina análisis deportivo, exploración cultural 
+        y entretenimiento. Es, en esencia, un <em>producto de comunicación digital</em> que traduce estadística en memoria deportiva.
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
 st.image("https://i.imgur.com/tXsjOO5.png", caption="Alfa Romeo 158 en el GP de Gran Bretaña, 1950", use_container_width=True)
 st.markdown("""
 <div style="background-color: rgba(255, 255, 255, 0.92); padding: 1.5rem; border-radius: 12px; margin-top: 1rem;">
