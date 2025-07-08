@@ -229,26 +229,30 @@ if birth_day and birth_month_name:
         (races_df["Date_Parsed"].dt.month == month_number + 1)
     ]
 
-    if not matching_races.empty:
-        st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
-        st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]])
-    else:
-        st.warning("😢 No hubo ningún Grand Prix ese día.")
-        
-        # Como extra, muestro la carrera más cercana al cumpleaños
-        st.subheader("📅 Carrera más cercana a tu cumpleaños")
-        ref_date = datetime(1955, month_number + 1, int(birth_day))
-        races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
-        closest = races_df.loc[races_df["Diff"].idxmin()]
-        
-        # Traducción del mes al español
-        fecha_gp = closest["Date_Parsed"]
-        mes_es = month_translation[fecha_gp.strftime("%b")]
-        fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
-        gp_name = gp_to_country.get(closest["Grand Prix"], closest["Grand Prix"])
-        
-        mensaje = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest['Winner']} con {closest['Team']}."
-        st.info(mensaje[0].upper() + mensaje[1:])
+if not matching_races.empty:
+    st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
+    st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]])
+else:
+    st.warning("😢 No hubo ningún Grand Prix ese día.")
+
+    # Como extra, muestro la carrera más cercana al cumpleaños
+    st.subheader("📅 Carrera más cercana a tu cumpleaños")
+    ref_date = datetime(1955, month_number + 1, int(birth_day))
+    races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
+    closest = races_df.loc[races_df["Diff"].idxmin()]
+
+    # Traducción del mes al español
+    fecha_gp = closest["Date_Parsed"]
+    mes_es = month_translation[fecha_gp.strftime("%b")]
+    fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
+
+    # 🔧 CORRECCIÓN: usamos el diccionario solo si la clave está
+    gp_raw = closest["Grand Prix"]
+    gp_name = gp_to_country[gp_raw] if gp_raw in gp_to_country else gp_raw
+
+    mensaje = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest['Winner']} con {closest['Team']}."
+    st.info(mensaje[0].upper() + mensaje[1:])
+
 
 # ===================== ¿QUÉ PAÍS TUVO MÁS CARRERAS? =====================
 # Este bloque analiza qué país tuvo más Grandes Premios en la década. 
