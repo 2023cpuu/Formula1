@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
-import altair as alt
+import altair as alt  # ✅ ESTE ES EL IMPORT FALTANTE
 from datetime import datetime
 import time
 import random
