@@ -210,8 +210,6 @@ for año, evento in eventos_f1_50s.items():
         st.markdown(f"<div style='font-size:16px'>{evento}</div>", unsafe_allow_html=True)
 
 # ===================== ¿HUBO UNA CARRERA EN TU CUMPLEAÑOS? =====================
-# Esta parte es una especie de juego: elijo día y mes de mi cumple y veo si hubo GP en ese día
-
 st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
 
 # Uso dos columnas para seleccionar día y mes
@@ -222,36 +220,37 @@ birth_month_name = col2.selectbox("Mes", [""] + list(month_translation.values())
 if birth_day and birth_month_name:
     # Convierto el mes de texto a número
     month_number = list(month_translation.values()).index(birth_month_name)
-    
+
     # Filtro las carreras que coinciden exactamente con ese día
     matching_races = races_df[
         (races_df["Date_Parsed"].dt.day == int(birth_day)) &
         (races_df["Date_Parsed"].dt.month == month_number + 1)
     ]
 
-if not matching_races.empty:
-    st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
-    st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]])
-else:
-    st.warning("😢 No hubo ningún Grand Prix ese día.")
+    if not matching_races.empty:
+        st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
+        st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]])
+    else:
+        st.warning("😢 No hubo ningún Grand Prix ese día.")
 
-    # Como extra, muestro la carrera más cercana al cumpleaños
-    st.subheader("📅 Carrera más cercana a tu cumpleaños")
-    ref_date = datetime(1955, month_number + 1, int(birth_day))
-    races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
-    closest = races_df.loc[races_df["Diff"].idxmin()]
+        # Como extra, muestro la carrera más cercana al cumpleaños
+        st.subheader("📅 Carrera más cercana a tu cumpleaños")
+        ref_date = datetime(1955, month_number + 1, int(birth_day))
+        races_df["Diff"] = races_df["Date_Parsed"].apply(lambda x: abs((x - ref_date).days))
+        closest = races_df.loc[races_df["Diff"].idxmin()]
 
-    # Traducción del mes al español
-    fecha_gp = closest["Date_Parsed"]
-    mes_es = month_translation[fecha_gp.strftime("%b")]
-    fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
+        # Traducción del mes al español
+        fecha_gp = closest["Date_Parsed"]
+        mes_es = month_translation[fecha_gp.strftime("%b")]
+        fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
 
-    # 🔧 CORRECCIÓN: usamos el diccionario solo si la clave está
-    gp_raw = closest["Grand Prix"]
-    gp_name = gp_to_country[gp_raw] if gp_raw in gp_to_country else gp_raw
+        # 🔧 Corrección robusta al traducir el GP
+        gp_raw = closest["Grand Prix"]
+        gp_name = gp_to_country[gp_raw] if gp_raw in gp_to_country else gp_raw
 
-    mensaje = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest['Winner']} con {closest['Team']}."
-    st.info(mensaje[0].upper() + mensaje[1:])
+        mensaje = f"El GP de {gp_name} en {fecha_str} fue la carrera más cercana a tu cumple. Ganó {closest['Winner']} con {closest['Team']}."
+        st.info(mensaje[0].upper() + mensaje[1:])
+
 
 
 # ===================== ¿QUÉ PAÍS TUVO MÁS CARRERAS? =====================
