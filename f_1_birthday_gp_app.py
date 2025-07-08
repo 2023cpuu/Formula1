@@ -138,8 +138,9 @@ chart_winners = alt.Chart(top5_winners).mark_bar(color='crimson').encode(
 
 st.altair_chart(chart_winners, use_container_width=True)
 
-# ======================= Escudería más dominante =======================
+# === Escudería más dominante ===
 st.subheader("🔧 Escudería más dominante de los 50s")
+
 top5_teams = races_df["Team"].value_counts().head(5).reset_index()
 top5_teams.columns = ["Escudería", "Victorias"]
 top5_teams.index += 1
@@ -151,6 +152,7 @@ chart_teams = alt.Chart(top5_teams).mark_bar(color='steelblue').encode(
 ).properties(width=600, height=250)
 
 st.altair_chart(chart_teams, use_container_width=True)
+
 
 # ======================= Línea del tiempo =======================
 st.subheader("📜 Línea del tiempo interactiva: Fórmula 1 en los años 50")
