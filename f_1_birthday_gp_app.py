@@ -138,6 +138,24 @@ Pocos conocen esta parte de la historia. Esta plataforma te invita a redescubrir
 </p>
 """, unsafe_allow_html=True)
 
+races_df = load_data()
+
+# === Top 5 pilotos con más victorias en los 50s ===
+top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
+top5_winners.columns = ["Piloto", "Victorias"]
+top5_winners.index += 1
+
+st.subheader("🏆 Piloto con más victorias en los 50s")
+
+chart_winners = alt.Chart(top5_winners).mark_bar(color='crimson').encode(
+    x=alt.X("Victorias:Q", axis=alt.Axis(title="Victorias", format="d")),
+    y=alt.Y("Piloto:N", sort='-x', title=""),
+    tooltip=["Piloto", "Victorias"]
+).properties(width=600, height=250)
+
+st.altair_chart(chart_winners, use_container_width=True)
+
+
 st.subheader("🏆 Piloto con más victorias en los 50s")
 
 top5_winners = races_df["Winner"].value_counts().head(5).reset_index()
