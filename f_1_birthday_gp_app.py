@@ -431,7 +431,7 @@ with tab2:
         victorias_escuderia.index += 1
         victorias_escuderia.index.name = "N°"
         st.dataframe(victorias_escuderia, use_container_width=True)
-# ===================== TEST: ¿QUÉ ESCUDERÍA USARÍAS? =====================
+# ===================== TEST: ¿DE QUÉ ESCUDERÍA SERÍAS? =====================
 
 # Título de la sección
 st.subheader("🛠️ ¿De qué escudería serías?")
