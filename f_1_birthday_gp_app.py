@@ -103,12 +103,11 @@ races_df = load_data()
 # ===================== CORRECCIÓN: Agrego las 9 carreras faltantes de Indianápolis =====================
 
 indy_faltantes = pd.DataFrame([
-    {"Year": 1950, "Grand Prix": "Indianapolis 500", "Date": "30 May 1950", "Winner": "Johnnie Parsons", "Team": "Kurtis Kraft"},
-    {"Year": 1951, "Grand Prix": "Indianapolis 500", "Date": "30 May 1951", "Winner": "Lee Wallard", "Team": "Kurtis Kraft"},
+    {"Year": 1951, "Grand Prix": "Indianapolis 500", "Date": "30 May 1951", "Winner": "Lee Wallard", "Team": "Kurtis Kraft-Offenhauser"},
     {"Year": 1952, "Grand Prix": "Indianapolis 500", "Date": "30 May 1952", "Winner": "Troy Ruttman", "Team": "Kuzma"},
-    {"Year": 1953, "Grand Prix": "Indianapolis 500", "Date": "30 May 1953", "Winner": "Bill Vukovich", "Team": "Kurtis Kraft"},
-    {"Year": 1954, "Grand Prix": "Indianapolis 500", "Date": "30 May 1954", "Winner": "Bill Vukovich", "Team": "Kurtis Kraft"},
-    {"Year": 1955, "Grand Prix": "Indianapolis 500", "Date": "30 May 1955", "Winner": "Bob Sweikert", "Team": "Kurtis Kraft"},
+    {"Year": 1953, "Grand Prix": "Indianapolis 500", "Date": "30 May 1953", "Winner": "Bill Vukovich", "Team": "Kurtis Kraft-Offenhauser"},
+    {"Year": 1954, "Grand Prix": "Indianapolis 500", "Date": "30 May 1954", "Winner": "Bill Vukovich", "Team": "Kurtis Kraft-Offenhauser"},
+    {"Year": 1955, "Grand Prix": "Indianapolis 500", "Date": "30 May 1955", "Winner": "Bob Sweikert", "Team": "Kurtis Kraft-Offenhauser"},
     {"Year": 1956, "Grand Prix": "Indianapolis 500", "Date": "30 May 1956", "Winner": "Pat Flaherty", "Team": "Watson"},
     {"Year": 1957, "Grand Prix": "Indianapolis 500", "Date": "30 May 1957", "Winner": "Sam Hanks", "Team": "Epperly"},
     {"Year": 1958, "Grand Prix": "Indianapolis 500", "Date": "30 May 1958", "Winner": "Jimmy Bryan", "Team": "Epperly"},
