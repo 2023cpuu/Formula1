@@ -133,14 +133,11 @@ gp_to_circuits = {
     "Swiss": ["Bremgarten"]
 }
 
-# 🔧 Normalizo cualquier nombre que sea Indianápolis a una sola forma
-races_df.loc[races_df["Grand Prix"].str.contains("indianapolis", case=False, na=False), "Grand Prix"] = "Indianapolis 500"
-
 # 🗺️ Ahora mapeo correctamente los países
 races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
+st.write(races_df[races_df["Grand Prix"].str.contains("indianapolis", case=False, na=False)])
 
-# 🔁 Reafirmo que "Indianapolis 500" pertenece a Estados Unidos
-races_df.loc[races_df["Grand Prix"] == "Indianapolis 500", "País"] = "Estados Unidos"
+
 
 
 
