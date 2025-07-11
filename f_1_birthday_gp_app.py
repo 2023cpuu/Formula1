@@ -135,7 +135,7 @@ gp_to_circuits = {
 
 # Le agrego la columna "País" al DataFrame con base en la traducción del nombre del GP
 races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
-# Me aseguro que todas las filas con Indianapolis 500 tengan correctamente el país
+# Corrección manual para asegurarme de que todas las carreras de Indianápolis estén bien etiquetadas
 races_df.loc[races_df["Grand Prix"] == "Indianapolis 500", "País"] = "Estados Unidos"
 
 
