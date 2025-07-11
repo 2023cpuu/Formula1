@@ -133,14 +133,15 @@ gp_to_circuits = {
     "Swiss": ["Bremgarten"]
 }
 
-# Le agrego la columna "País" al DataFrame con base en la traducción del nombre del GP
-races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
-
-# Normalizo cualquier nombre que sea Indianápolis a una sola forma
+# 🔧 Normalizo cualquier nombre que sea Indianápolis a una sola forma
 races_df.loc[races_df["Grand Prix"].str.contains("indianapolis", case=False, na=False), "Grand Prix"] = "Indianapolis 500"
 
-# Corrección manual para asegurarme de que todas las carreras de Indianápolis estén bien etiquetadas
+# 🗺️ Ahora mapeo correctamente los países
+races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
+
+# 🔁 Reafirmo que "Indianapolis 500" pertenece a Estados Unidos
 races_df.loc[races_df["Grand Prix"] == "Indianapolis 500", "País"] = "Estados Unidos"
+
 
 
 # ===================== SECCIÓN: ¿POR QUÉ LOS 50S? =====================
