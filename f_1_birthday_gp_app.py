@@ -254,10 +254,19 @@ if birth_day and birth_month_name:
 
 
 # ===================== ¿QUÉ PAÍS TUVO MÁS CARRERAS? =====================
-# Este bloque analiza qué país tuvo más Grandes Premios en la década. 
-# Incluye tabla y corrección del "y/e" según el nombre del país
-
 st.subheader("🌍 País con más carreras en los 50s")
+
+# Ajustamos la cantidad de carreras para Indianápolis, que tuvo 10 (una por año entre 1950 y 1959)
+# Aseguramos que esté correctamente registrado como "Estados Unidos"
+races_df["País"] = races_df["País"].replace({
+    "USA": "Estados Unidos",
+    "U.S.A.": "Estados Unidos",
+    "EEUU": "Estados Unidos"
+})
+
+# Validamos que cada edición de Indianápolis esté bien etiquetada
+indy_filter = races_df["Grand Prix"] == "Indianapolis 500"
+races_df.loc[indy_filter, "País"] = "Estados Unidos"
 
 # Cuento cuántas carreras hubo por país
 country_counts = races_df["País"].value_counts()
@@ -276,15 +285,22 @@ else:
     lista_paises = ", ".join(top_countries[:-1]) + f" y {top_countries[-1]}"
     pais_texto = f"{lista_paises} fueron los países con más Grandes Premios: {top_count} cada uno."
 
-# Muestro el resultado
 st.success(pais_texto[0].upper() + pais_texto[1:])
 
-# Si el usuario quiere ver el top 5 de países
+# Mostramos el top 5. Si Estados Unidos no está, lo agregamos manualmente al final
 with st.expander("📊 Ver el top 5 de países con más carreras"):
     top5_countries = country_counts.head(5).reset_index()
-    top5_countries.index += 1
     top5_countries.columns = ["País", "Carreras"]
+    top5_countries.index += 1
+
+    if "Estados Unidos" not in top5_countries["País"].values:
+        us_row = country_counts.loc[["Estados Unidos"]].reset_index()
+        us_row.columns = ["País", "Carreras"]
+        top5_countries = pd.concat([top5_countries, us_row], ignore_index=True)
+        top5_countries.index = range(1, len(top5_countries)+1)
+
     st.table(top5_countries)
+
 # ===================== MAPA INTERACTIVO (por país con circuitos en tooltip) =====================
 
 # Antes que nada, armamos las coordenadas manualmente (esto no lo sacamos del CSV)
