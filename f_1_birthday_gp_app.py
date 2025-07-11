@@ -192,16 +192,16 @@ st.altair_chart(chart_teams, use_container_width=True)
 st.subheader("📜 Línea del tiempo interactiva: Fórmula 1 en los años 50")
 
 eventos_f1_50s = {
-    1950: "🏁 Primer campeonato oficial de F1. Farina vence a Fangio y gana el primer título.",
-    1951: "🇦🇷 Fangio gana su primer campeonato con Alfa Romeo. Se convierte en una figura dominante.",
+    1950: "🏁 Se da el primer campeonato oficial de F1. Farina vence a Fangio y gana el título.",
+    1951: "🔥 Fangio gana su primer campeonato con Alfa Romeo, convirtiéndose en una figura dominante. Pero, por falta de apoyo financiero del gobierno italiano, su equipo decide retirarse de la competencia ese año",
     1952: "🔧 Ferrari domina tras la salida de Alfa Romeo. Ascari gana 6 carreras.",
-    1953: "🏎️ Ascari repite título con Ferrari. Temporada marcada por su consistencia.",
-    1954: "⚙️ Fangio empieza con Maserati, termina con Mercedes… ¡y gana el título!",
-    1955: "☠️ Tragedia en Le Mans (80 muertos). Mercedes se retira. Fangio vuelve a campeonar.",
-    1956: "🔄 Fangio gana con Ferrari. Cede su auto a Collins para asegurar el título.",
-    1957: "🔥 Fangio gana en Nürburgring tras remontar 48 segundos. Su quinto campeonato.",
-    1958: "🧠 Se establece el campeonato de constructores. Mike Hawthorn gana el título.",
-    1959: "🧪 Cooper innova con motor trasero. Brabham gana su primer título mundial."
+    1953: "🏎️ Ascari repite título con Ferrari, la temporada es marcada por su consistencia.",
+    1954: "⚙️ Fangio empieza con Maserati, termina con Mercedes… ¡y gana su segundo título!",
+    1955: "☠️ Un Mercedes-Benz 300 SLR se estrella contra la tribuna en la competencia 24 horas de Le Mans, matando a más de 80 espectadores y al piloto Pierre Levegh. Esto ocasiona que, aunque era una competencia distinta, Mercedes se retire también de la F1. Fangio vuelve a campeonar.",
+    1956: "🔄 Fangio gana su cuarto título con un Ferrari, gracias a que su compañero Collins le cedió su auto durante un pit-stop. Collins priorizó el título del argentino por sobre sus propias posibilidades de ganar la carrera.",
+    1957: "🕊️ Fallece Eugenio Castellotti durante una sesión privada de pruebas de Ferrari en el Autódromo de Módena. Fangio gana su quinto campeonato en un Maserati, lamentando la pérdida de su compañero de equipo de 1956.",
+    1958: "🧠 Se establece el campeonato de constructores, el cual se otorga a la escudería que acumule más puntos a lo largo de la temporada, considerando los resultados de todos sus pilotos. Gana la escudería Vanwall y Mike Hawthorn gana el campeonato de pilotos en un Ferrari. Fangio es secuestrado por 26 horas el 23 de febrero por el Movimiento 26 de Julio, el Gran Premio de Cuba no sale en las bases de datos pero se habría celebrado para atraer a turistas estadounidenses por lo que el secuestro se realizó en protesta. Este mismo año, Fangio se retira de la Fórmula 1 después del Gran Premio de Francia en Reims.",
+    1959: "🧪 Jack Brabham, piloto de Cooper, se quedó sin combustible en la última vuelta, pero logró empujar su carro hasta la meta para asegurar su primer título mundial."
 }
 
 # Cada año aparece como expander para que el usuario vaya abriéndolos como quiera
