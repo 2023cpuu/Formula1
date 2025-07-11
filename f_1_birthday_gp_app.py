@@ -8,7 +8,7 @@ import time
 import random
 
 # ====================== ESTILO GENERAL: fondo blanco con patrón de bandera a cuadros ======================
-# Acá le doy estilo a toda la página para que tenga un fondo de banderita a cuadros y los contenedores se vean bien legibles
+# Acá le doy estilo a toda la página para que tenga un fondo de banderita a cuadros y los textos sean legibles.
 
 st.markdown(
     """
@@ -40,7 +40,7 @@ st.markdown(
 )
 
 # ====================== ANIMACIÓN INICIAL: auto corriendo de derecha a izquierda ======================
-# Esta parte hace que un autito 🏎️ pase al principio para que la app tenga más personalidad y enganche
+# Esta parte hace que un emoji de auto rojo de F1 pase al principio para que la app tenga una introducción y no todo sea estático.
 car_animation = """
 <div style="position:relative; height:160px; overflow:hidden;">
     <div style="
@@ -66,7 +66,7 @@ st.markdown(car_animation, unsafe_allow_html=True)
 time.sleep(3.5)
 
 # ====================== TÍTULO Y PRESENTACIÓN ======================
-# Este es el título principal que estará siempre arriba. Debajo, una imagen icónica y un texto que introduce la idea de la app
+# Este es el título principal que estará siempre arriba. Debajo, una imagen de los Alfa Romeo 158 en el GP de Gran Bretaña (1950) y un texto que introduce la idea de la app
 
 st.markdown("<h1 style='text-align: center;'>La Fórmula de los 50s</h1>", unsafe_allow_html=True)
 
@@ -76,14 +76,14 @@ st.markdown("""
 <div style="background-color: rgba(255, 255, 255, 0.92); padding: 1.5rem; border-radius: 12px; margin-top: 1rem;">
     <h4 style="color: black;">🏁 Bienvenido a la era dorada de la F1</h4>
     <p style="color: black; font-size: 16px; line-height: 1.6;">
-        Antes de los autos híbridos, de los cascos ultratecnológicos y de las radios con estrategias complicadas, la Fórmula 1 era puro corazón, instinto y gasolina. Los años 50 fueron el inicio de una leyenda: pilotos temerarios, escuderías míticas y circuitos que hacían historia vuelta a vuelta.
+        Antes de los autos híbridos, de los cascos ultratecnológicos y de las radios con estrategias complicadas, la Fórmula 1 era puro corazón, instinto y gasolina. Los años 50 fueron el inicio de una leyenda: pilotos temerarios, escuderías míticas y circuitos que permitían la historia vuelta a vuelta.
     </p>
     <p style="color: black; font-size: 16px; line-height: 1.6;">
-        Esta página no es solo una base de datos: es un viaje interactivo a la década donde todo comenzó. ¿Hubo una carrera en tu cumpleaños? ¿Qué equipo de los 50s te representa más? ¿Cuánto sabes realmente sobre Fangio, Ascari o los peligrosos circuitos de la época?
+        Esta página no es solo una base de datos: es un viaje interactivo a la década donde todo comenzó. 
     </p>
     <p style="color: black; font-size: 16px; font-weight: bold;">
-        Hoy muchos conocen a Verstappen o Hamilton, pero pocos a Fangio o Ascari. Esta web busca cambiar eso.<br>
-        Explora, juega, descubre. Porque entender el presente de la F1 también es rendir homenaje a su pasado más bravo. 🏎️✨
+        Hoy muchos conocen a Verstappen o Hamilton, y pocos recuerdan las historias de Fangio o Ascari. Esta web busca cambiar eso.<br>
+        Explora, juega y descubre. Porque entender el presente de la F1 también es rendir homenaje a su pasado más bravo. 🏎️✨
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -101,6 +101,7 @@ def load_data():
 # Llamo a la función y guardo el DataFrame como races_df
 races_df = load_data()
 # ===================== CORRECCIÓN: Agrego las 9 carreras faltantes de Indianápolis =====================
+#En la base de datos general de la página de F1 no están todas registradas, pero luego en algunas tablas aparece que fueron 10 carreras en Indianápolis. Por ello, y para evitar la malinformación decidí agregarlas manualmente.
 
 indy_faltantes = pd.DataFrame([
     {"Year": 1951, "Grand Prix": "Indianapolis 500", "Date": "30 May 1951", "Winner": "Lee Wallard", "Team": "Kurtis Kraft-Offenhauser"},
@@ -174,7 +175,7 @@ Pocos conocen esta parte de la historia. Esta plataforma te invita a redescubrir
 """, unsafe_allow_html=True)
 
 # ===================== TOP 5 PILOTOS CON MÁS VICTORIAS =====================
-# Armo una tabla con los 5 pilotos que más ganaron en la década. Le sumo un gráfico con Altair para hacerlo visual
+# Armo una tabla con los 5 pilotos que más ganaron en la década. Le sumo un gráfico de barras con Altair para hacerlo visual
 
 st.subheader("🏆 Piloto con más victorias en los 50s")
 
@@ -212,7 +213,7 @@ chart_teams = alt.Chart(top5_teams).mark_bar(color='steelblue').encode(
 st.altair_chart(chart_teams, use_container_width=True)
 
 # ===================== LÍNEA DEL TIEMPO INTERACTIVA =====================
-# Quise resumir los momentos más importantes de cada año en una especie de línea del tiempo simple con expanders
+# Quise resumir los momentos más importantes de cada año en una especie de línea del tiempo simple con desglosables.
 
 st.subheader("📜 Línea del tiempo interactiva: Fórmula 1 en los años 50")
 
@@ -229,13 +230,14 @@ eventos_f1_50s = {
     1959: "🧪 Jack Brabham, piloto de Cooper, se quedó sin combustible en la última vuelta, pero logró empujar su carro hasta la meta para asegurar su primer título mundial."
 }
 
-# Cada año aparece como expander para que el usuario vaya abriéndolos como quiera
+# Cada año aparece como un desglosable para que el usuario vaya abriéndolos como quiera
 for año, evento in eventos_f1_50s.items():
     with st.expander(f"📅 {año}"):
         st.markdown(f"<div style='font-size:16px'>{evento}</div>", unsafe_allow_html=True)
 
 # ===================== ¿HUBO UNA CARRERA EN TU CUMPLEAÑOS? =====================
 st.subheader("🎂 ¿Hubo una carrera de F1 en tu cumpleaños durante los años 50?")
+#Una forma interactiva de vincular al usuario con el pasado, y generar curiosidad que los mantenga en la página.
 
 # Uso dos columnas para seleccionar día y mes
 col1, col2 = st.columns(2)
@@ -256,7 +258,7 @@ if birth_day and birth_month_name:
         st.success("🎉 ¡Sí hubo Grand Prix en tu cumpleaños!")
         st.dataframe(matching_races[["Year", "Grand Prix", "Date", "Winner", "Team"]])
     else:
-        st.warning("😢 No hubo ningún Grand Prix ese día.")
+        st.warning("No hubo ningún Grand Prix ese día.")
 
         # Como extra, muestro la carrera más cercana al cumpleaños
         st.subheader("📅 Carrera más cercana a tu cumpleaños")
@@ -269,7 +271,7 @@ if birth_day and birth_month_name:
         mes_es = month_translation[fecha_gp.strftime("%b")]
         fecha_str = f"{fecha_gp.day} {mes_es} {fecha_gp.year}"
 
-        # 🔧 Corrección robusta al traducir el GP
+        # 🔧 Corrección al traducir el GP
         gp_raw = closest["Grand Prix"]
         gp_name = gp_to_country[gp_raw] if gp_raw in gp_to_country else gp_raw
 
@@ -281,15 +283,15 @@ if birth_day and birth_month_name:
 # ===================== ¿QUÉ PAÍS TUVO MÁS CARRERAS? =====================
 st.subheader("🌍 País con más carreras en los 50s")
 
-# Ajustamos la cantidad de carreras para Indianápolis, que tuvo 10 (una por año entre 1950 y 1959)
-# Aseguramos que esté correctamente registrado como "Estados Unidos"
+# Ajusto la cantidad de carreras para Indianápolis, que tuvo 10 (una por año entre 1950 y 1959)
+# Me aseguro de que esté correctamente registrado como "Estados Unidos"
 races_df["País"] = races_df["País"].replace({
     "USA": "Estados Unidos",
     "U.S.A.": "Estados Unidos",
     "EEUU": "Estados Unidos"
 })
 
-# Validamos que cada edición de Indianápolis esté bien etiquetada
+# Valido que cada edición de Indianápolis esté bien etiquetada
 indy_filter = races_df["Grand Prix"] == "Indianapolis 500"
 races_df.loc[indy_filter, "País"] = "Estados Unidos"
 
@@ -298,7 +300,7 @@ country_counts = races_df["País"].value_counts()
 top_count = country_counts.max()
 top_countries = country_counts[country_counts == top_count].index.tolist()
 
-# Acá controlo cómo se muestra el texto dependiendo de si hay empate entre países
+# Acá controlo cómo se muestra el texto dependiendo de si hay empate entre países (empatan Reino Unido, Estados Unidos e Italia)
 if len(top_countries) == 1:
     pais_texto = f"{top_countries[0]} fue el país con más Grandes Premios: {top_count} en total."
 elif len(top_countries) == 2:
@@ -313,25 +315,25 @@ else:
 st.success(pais_texto[0].upper() + pais_texto[1:])
 
 with st.expander("📊 Ver el top 5 de países con más carreras"):
-    # Convertir a DataFrame con columnas nombradas
+    # Convierto a DataFrame con columnas nombradas
     country_df = country_counts.reset_index()
     country_df.columns = ["País", "Carreras"]
 
-    # Obtener solo las primeras 5 filas, respetando los empates
+    # Obtengo solo las primeras 5 filas, respetando los empates
     top_5_unique = country_df["Carreras"].unique()[:5]  # toma los 5 valores distintos más altos
     top5_df = country_df[country_df["Carreras"].isin(top_5_unique)].sort_values("Carreras", ascending=False)
 
-    # Limitar a 5 filas exactas si hay más por empate
+    # Limito a 5 filas exactas si hay más por empate
     if len(top5_df) > 5:
         top5_df = top5_df.head(5)
 
-    # Numerar desde 1
+    # Numero desde 1 en la tabla para evitar que numere sumando el número de carreras
     top5_df.index = range(1, len(top5_df)+1)
     st.table(top5_df)
 
 # ===================== MAPA INTERACTIVO (por país con circuitos en tooltip) =====================
 
-# Antes que nada, armamos las coordenadas manualmente (esto no lo sacamos del CSV)
+# Antes que nada, armo las coordenadas manualmente (no sale del CSV)
 country_coords = {
     "Reino Unido": [51.5, -0.1], "Francia": [48.85, 2.35], "Italia": [41.9, 12.5],
     "Alemania": [52.52, 13.4], "Mónaco": [43.73, 7.42], "Bélgica": [50.85, 4.35],
@@ -340,7 +342,7 @@ country_coords = {
     "Marruecos": [33.58, -7.62]
 }
 
-# Armamos un diccionario que relacione país con sus circuitos usados
+# Armo un diccionario que relacione país con sus circuitos usados
 circuitos_por_pais = {}
 for gp, pais in gp_to_country.items():
     if gp in gp_to_circuits:
@@ -349,7 +351,7 @@ for gp, pais in gp_to_country.items():
 # Título de la sección
 st.subheader("🗺️ Mapa de países con carreras en los años 50")
 
-# Ahora armamos los datos para el mapa
+# Ahora armo los datos para el mapa
 map_data = []
 for country, count in country_counts.items():
     if country in country_coords:
@@ -364,10 +366,10 @@ for country, count in country_counts.items():
             "Tooltip": tooltip_text
         })
 
-# Convertimos la lista en un DataFrame para usar en el mapa
+# Convierto la lista en un DataFrame para usar en el mapa
 map_df = pd.DataFrame(map_data)
 
-# Creamos la capa de puntos del mapa
+# Creo la capa de puntos del mapa
 layer = pdk.Layer(
     "ScatterplotLayer",
     data=map_df,
@@ -381,7 +383,7 @@ layer = pdk.Layer(
 # Vista inicial del mapa (centrada en el mundo)
 view_state = pdk.ViewState(latitude=20, longitude=0, zoom=1.2, pitch=0)
 
-# Mostramos el mapa
+# Muestro el mapa
 st.pydeck_chart(pdk.Deck(
     layers=[layer],
     initial_view_state=view_state,
@@ -390,26 +392,26 @@ st.pydeck_chart(pdk.Deck(
 # ===================== EXPLORAR DESEMPEÑO DE PILOTOS Y ESCUDERÍAS =====================
 
 # Título general de esta sección
-st.subheader("🔍 Explora desempeño de pilotos y escuderías")
+st.subheader("🔍 Explora el desempeño de pilotos y escuderías")
 
 # Instrucción para el usuario
 st.markdown("Selecciona **una sola opción** para ver el historial de victorias de un piloto o una escudería:")
 
-# Creamos dos pestañas (tabs): una para pilotos, otra para escuderías
+# Creo dos pestañas (tabs): una para pilotos, otra para escuderías
 tab1, tab2 = st.tabs(["🏎️ Ver por piloto", "🔧 Ver por escudería"])
 
 # ==== TAB 1: Por piloto ====
 with tab1:
-    # Extraigo la lista de pilotos únicos que hayan ganado al menos una carrera
+    # Extraigo la lista de pilotos que hayan ganado al menos una carrera
     pilotos_unicos = sorted(races_df["Winner"].dropna().unique())
     # Agrego opción por defecto "--"
     piloto = st.selectbox("Selecciona un piloto ganador", ["--"] + pilotos_unicos)
 
     if piloto != "--":
-        # Mostramos tabla con todas sus victorias
+        # Muestro la tabla con todas sus victorias
         st.markdown(f"### 🏁 Victorias de **{piloto}** en los años 50")
         victorias_piloto = races_df[races_df["Winner"] == piloto][["Year", "Grand Prix", "Date", "Team"]].sort_values("Year")
-        # Resetear índice para que la tabla se vea ordenada
+        # Reseteo el índice para que la tabla se vea ordenada
         victorias_piloto.reset_index(drop=True, inplace=True)
         victorias_piloto.index += 1
         victorias_piloto.index.name = "N°"
@@ -424,7 +426,7 @@ with tab2:
     if escuderia != "--":
         st.markdown(f"### 🏆 Victorias de **{escuderia}** en los años 50")
         victorias_escuderia = races_df[races_df["Team"] == escuderia][["Year", "Grand Prix", "Date", "Winner"]].sort_values("Year")
-        # Ordenamos bien el índice para que se vea claro
+        # Ordeno bien el índice para que se vea claro
         victorias_escuderia.reset_index(drop=True, inplace=True)
         victorias_escuderia.index += 1
         victorias_escuderia.index.name = "N°"
@@ -432,10 +434,10 @@ with tab2:
 # ===================== TEST: ¿QUÉ ESCUDERÍA USARÍAS? =====================
 
 # Título de la sección
-st.subheader("🛠️ ¿Qué escudería usarías?")
+st.subheader("🛠️ ¿De qué escudería serías?")
 
 # Texto introductorio
-st.markdown("Responde este breve test y descubre qué escudería de los 50s te representa mejor.")
+st.markdown("Responde este breve test y descubre qué escudería de los 50s encaja mejor contigo.")
 
 # Diccionario con las preguntas y opciones. Cada opción tiene un perfil asociado
 preguntas = {
@@ -479,7 +481,7 @@ if st.button("Descubrir mi escudería ideal"):
     if not todo_listo:
         st.warning("Por favor responde todas las preguntas antes de continuar.")
     else:
-        # Contamos cuántas veces se repite cada perfil en las respuestas
+        # Cuento cuántas veces se repite cada perfil en las respuestas
         conteo = pd.Series(respuestas).value_counts()
         resultado = conteo.idxmax()  # Nos quedamos con el perfil dominante
 
@@ -496,10 +498,10 @@ if st.button("Descubrir mi escudería ideal"):
             "disciplinado": "Gordini"
         }
 
-        # Buscamos la escudería final
+        # Busco la escudería final
         escuderia = perfil_to_team.get(resultado, "Ferrari")
-        # Mostramos el resultado al usuario
-        st.success(f"🏁 ¡Tu escudería ideal es **{escuderia}**!")
+        # Muestro el resultado al usuario
+        st.success(f"🏁 ¡Serías de **{escuderia}**!")
 # ===================== TRIVIA INTERACTIVA =====================
 
 # Título
