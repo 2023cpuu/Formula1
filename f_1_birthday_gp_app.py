@@ -100,6 +100,30 @@ def load_data():
 
 # Llamo a la función y guardo el DataFrame como races_df
 races_df = load_data()
+# ===================== CORRECCIÓN: Agrego las 9 carreras faltantes de Indianápolis =====================
+
+indy_faltantes = pd.DataFrame([
+    {"Year": 1950, "Grand Prix": "Indianapolis 500", "Date": "30 May 1950", "Winner": "Johnnie Parsons", "Team": "Kurtis Kraft"},
+    {"Year": 1951, "Grand Prix": "Indianapolis 500", "Date": "30 May 1951", "Winner": "Lee Wallard", "Team": "Kurtis Kraft"},
+    {"Year": 1952, "Grand Prix": "Indianapolis 500", "Date": "30 May 1952", "Winner": "Troy Ruttman", "Team": "Kuzma"},
+    {"Year": 1953, "Grand Prix": "Indianapolis 500", "Date": "30 May 1953", "Winner": "Bill Vukovich", "Team": "Kurtis Kraft"},
+    {"Year": 1954, "Grand Prix": "Indianapolis 500", "Date": "30 May 1954", "Winner": "Bill Vukovich", "Team": "Kurtis Kraft"},
+    {"Year": 1955, "Grand Prix": "Indianapolis 500", "Date": "30 May 1955", "Winner": "Bob Sweikert", "Team": "Kurtis Kraft"},
+    {"Year": 1956, "Grand Prix": "Indianapolis 500", "Date": "30 May 1956", "Winner": "Pat Flaherty", "Team": "Watson"},
+    {"Year": 1957, "Grand Prix": "Indianapolis 500", "Date": "30 May 1957", "Winner": "Sam Hanks", "Team": "Epperly"},
+    {"Year": 1958, "Grand Prix": "Indianapolis 500", "Date": "30 May 1958", "Winner": "Jimmy Bryan", "Team": "Epperly"},
+    {"Year": 1959, "Grand Prix": "Indianapolis 500", "Date": "30 May 1959", "Winner": "Rodger Ward", "Team": "Watson"}
+])
+
+# Parseo la fecha correctamente
+indy_faltantes["Date_Parsed"] = pd.to_datetime(indy_faltantes["Date"], format="%d %b %Y", errors='coerce')
+
+# Asigno manualmente el país correcto
+indy_faltantes["País"] = "Estados Unidos"
+
+# Uno estas filas al DataFrame original
+races_df = pd.concat([races_df, indy_faltantes], ignore_index=True)
+
 
 # ===================== TRADUCCIÓN DE NOMBRES =====================
 # Para que se entienda mejor, traduzco los nombres de los GP a países, y también los meses a español
@@ -292,19 +316,22 @@ else:
 
 st.success(pais_texto[0].upper() + pais_texto[1:])
 
-# Mostramos el top 5. Si Estados Unidos no está, lo agregamos manualmente al final
 with st.expander("📊 Ver el top 5 de países con más carreras"):
-    top5_countries = country_counts.head(5).reset_index()
-    top5_countries.columns = ["País", "Carreras"]
-    top5_countries.index += 1
+    # Convertir a DataFrame con columnas nombradas
+    country_df = country_counts.reset_index()
+    country_df.columns = ["País", "Carreras"]
 
-    if "Estados Unidos" not in top5_countries["País"].values:
-        us_row = country_counts.loc[["Estados Unidos"]].reset_index()
-        us_row.columns = ["País", "Carreras"]
-        top5_countries = pd.concat([top5_countries, us_row], ignore_index=True)
-        top5_countries.index = range(1, len(top5_countries)+1)
+    # Obtener solo las primeras 5 filas, respetando los empates
+    top_5_unique = country_df["Carreras"].unique()[:5]  # toma los 5 valores distintos más altos
+    top5_df = country_df[country_df["Carreras"].isin(top_5_unique)].sort_values("Carreras", ascending=False)
 
-    st.table(top5_countries)
+    # Limitar a 5 filas exactas si hay más por empate
+    if len(top5_df) > 5:
+        top5_df = top5_df.head(5)
+
+    # Numerar desde 1
+    top5_df.index = range(1, len(top5_df)+1)
+    st.table(top5_df)
 
 # ===================== MAPA INTERACTIVO (por país con circuitos en tooltip) =====================
 
