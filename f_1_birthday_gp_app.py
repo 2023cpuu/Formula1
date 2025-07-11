@@ -158,9 +158,6 @@ gp_to_circuits = {
 
 # 🗺️ Ahora mapeo correctamente los países
 races_df["País"] = races_df["Grand Prix"].map(gp_to_country)
-st.write(races_df[races_df["Grand Prix"].str.contains("indianapolis", case=False, na=False)])
-
-
 
 
 
