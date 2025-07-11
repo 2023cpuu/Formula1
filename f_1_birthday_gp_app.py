@@ -467,14 +467,14 @@ for i, (pregunta, opciones) in enumerate(preguntas.items()):
     st.markdown(f"**{i+1}. {pregunta}**")
     # Agrego una opción por defecto al inicio
     opciones_con_placeholder = ["Selecciona una opción..."] + list(opciones.keys())
-    # Usamos un selectbox con clave distinta para cada pregunta
+    # Uso un selectbox con clave distinta para cada pregunta
     seleccion = st.selectbox("", opciones_con_placeholder, key=f"preg_{i}")
     
-    # Si el usuario no responde una pregunta, marcamos que no está todo listo
+    # Si el usuario no responde una pregunta, marco que no está todo listo
     if seleccion == "Selecciona una opción...":
         todo_listo = False
     else:
-        respuestas.append(opciones[seleccion])  # Guardamos el perfil
+        respuestas.append(opciones[seleccion])  # Guardo el perfil
 
 # Botón para ver el resultado
 if st.button("Descubrir mi escudería ideal"):
@@ -483,7 +483,7 @@ if st.button("Descubrir mi escudería ideal"):
     else:
         # Cuento cuántas veces se repite cada perfil en las respuestas
         conteo = pd.Series(respuestas).value_counts()
-        resultado = conteo.idxmax()  # Nos quedamos con el perfil dominante
+        resultado = conteo.idxmax()  # Me quedo con el perfil dominante
 
         # Diccionario que relaciona perfil con escudería
         perfil_to_team = {
