@@ -125,7 +125,7 @@ gp_to_circuits = {
     "French": ["Reims-Gueux", "Rouen-Les-Essarts"],
     "German": ["Nürburgring", "AVUS"],
     "Indianapolis 500": ["Indianapolis Motor Speedway"],
-    "Italian": ["Autodromo Nazionale Monza"],
+    "Italian": ["Autodromo Nazionale Monza", "Circuito di Pescara"],
     "Monaco": ["Circuit de Monaco"],
     "Moroccan": ["Ain-Diab Circuit"],
     "Portuguese": ["Boavista", "Monsanto Park"],
